@@ -1,0 +1,11 @@
+
+> jorina-luxury-cosmetics@0.1.0 start
+> next start --hostname 0.0.0.0
+
+▲ Next.js 16.2.2
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+✓ Ready in 99ms
+⨯ The requested resource isn't a valid image for /assets/products/signature-discovery-set-1.jpg received null
+⨯ The requested resource isn't a valid image for /assets/products/blush-veil-setting-powder-1.jpg received null
+⨯ The requested resource isn't a valid image for /assets/products/night-renewal-serum-1.jpg received null

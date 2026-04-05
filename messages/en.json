@@ -1,0 +1,110 @@
+{
+  "navigation": {
+    "home": "Home",
+    "shop": "Shop",
+    "categories": "Categories",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers",
+    "offers": "Offers",
+    "about": "About",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "shipping": "Shipping & Delivery",
+    "returnsPolicy": "Returns Policy",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms & Conditions"
+  },
+  "common": {
+    "search": "Search products or categories",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading",
+    "viewAll": "View all",
+    "viewDetails": "View details",
+    "learnMore": "Learn more",
+    "subtotal": "Subtotal",
+    "shippingFee": "Shipping fee",
+    "total": "Total",
+    "empty": "Nothing here yet",
+    "country": "Country",
+    "language": "Language",
+    "cashOnDelivery": "Cash on delivery"
+  },
+  "announcement": {
+    "text": "Shipping across Saudi Arabia with a placeholder flat fee of SAR 25"
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "addToWishlist": "Add to wishlist",
+    "inWishlist": "Saved to wishlist",
+    "quantity": "Quantity",
+    "shade": "Shade",
+    "related": "Related products",
+    "delivery": "Delivery details",
+    "returns": "Return details",
+    "details": "Details",
+    "ingredients": "Ingredients",
+    "howToUse": "How to use",
+    "outOfStock": "Out of stock"
+  },
+  "cart": {
+    "title": "Cart",
+    "emptyTitle": "Your cart is quiet right now",
+    "emptyBody": "Add a few considered pieces to begin your checkout journey.",
+    "continueShopping": "Continue shopping",
+    "checkout": "Proceed to checkout",
+    "remove": "Remove",
+    "update": "Update"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "contactInfo": "Contact information",
+    "shippingAddress": "Shipping address",
+    "notes": "Order notes",
+    "confirm": "Confirm order",
+    "successTitle": "Your order has been received",
+    "successBody": "We will review your order and contact you shortly to confirm it."
+  },
+  "auth": {
+    "title": "A polished entrance into JORINA",
+    "subtitle": "Sign in with Google to access orders, saved addresses and your curated favorites.",
+    "continueWithGoogle": "Continue with Google",
+    "configMissing": "Google credentials are not configured in the local environment yet."
+  },
+  "account": {
+    "overview": "Overview",
+    "orders": "My Orders",
+    "returns": "Returns",
+    "favorites": "Favorites",
+    "addresses": "Addresses",
+    "settings": "Settings",
+    "paymentMethods": "Payment methods",
+    "recentOrders": "Recent orders",
+    "savedAddresses": "Saved addresses",
+    "profile": "Profile",
+    "logout": "Log out"
+  },
+  "orderStatus": {
+    "PENDING": "Pending",
+    "CONFIRMED": "Confirmed",
+    "SHIPPED": "Shipped",
+    "DELIVERED": "Delivered",
+    "CANCELLED": "Cancelled",
+    "RETURNED": "Returned"
+  },
+  "returnStatus": {
+    "REQUESTED": "Requested",
+    "UNDER_REVIEW": "Under review",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "RECEIVED": "Received",
+    "REFUNDED": "Processed"
+  },
+  "footer": {
+    "newsletterTitle": "Stay close to new JORINA releases",
+    "newsletterBody": "Subscribe to receive product launches and selected offers.",
+    "copyright": "All rights reserved to JORINA"
+  }
+}

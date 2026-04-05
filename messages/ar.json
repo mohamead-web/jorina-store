@@ -1,0 +1,110 @@
+{
+  "navigation": {
+    "home": "الرئيسية",
+    "shop": "المتجر",
+    "categories": "الفئات",
+    "newArrivals": "وصل حديثًا",
+    "bestSellers": "الأكثر مبيعًا",
+    "offers": "العروض",
+    "about": "عن العلامة",
+    "contact": "تواصل",
+    "faq": "الأسئلة الشائعة",
+    "shipping": "الشحن والتوصيل",
+    "returnsPolicy": "سياسة الإرجاع",
+    "privacyPolicy": "الخصوصية",
+    "terms": "الشروط والأحكام"
+  },
+  "common": {
+    "search": "ابحثي عن منتج أو فئة",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "loading": "جارٍ التحميل",
+    "viewAll": "عرض الكل",
+    "viewDetails": "عرض التفاصيل",
+    "learnMore": "اعرفي المزيد",
+    "subtotal": "المجموع الفرعي",
+    "shippingFee": "رسوم الشحن",
+    "total": "الإجمالي",
+    "empty": "لا يوجد محتوى حاليًا",
+    "country": "الدولة",
+    "language": "اللغة",
+    "cashOnDelivery": "الدفع عند الاستلام"
+  },
+  "announcement": {
+    "text": "شحن داخل السعودية ورسوم ثابتة مبدئية 25 ر.س"
+  },
+  "product": {
+    "addToCart": "أضيفي إلى السلة",
+    "addToWishlist": "إلى المفضلة",
+    "inWishlist": "ضمن المفضلة",
+    "quantity": "الكمية",
+    "shade": "الدرجة",
+    "related": "منتجات مقترحة",
+    "delivery": "معلومات التوصيل",
+    "returns": "معلومات الإرجاع",
+    "details": "التفاصيل",
+    "ingredients": "المكونات",
+    "howToUse": "طريقة الاستخدام",
+    "outOfStock": "نفد المخزون"
+  },
+  "cart": {
+    "title": "السلة",
+    "emptyTitle": "سلتك هادئة الآن",
+    "emptyBody": "أضيفي بعض المنتجات المختارة لتبدئي رحلة الشراء.",
+    "continueShopping": "العودة للتسوق",
+    "checkout": "إتمام الطلب",
+    "remove": "إزالة",
+    "update": "تحديث"
+  },
+  "checkout": {
+    "title": "إتمام الطلب",
+    "contactInfo": "معلومات التواصل",
+    "shippingAddress": "عنوان الشحن",
+    "notes": "ملاحظات الطلب",
+    "confirm": "تأكيد الطلب",
+    "successTitle": "تم استلام طلبك",
+    "successBody": "سنراجع الطلب ونتواصل معك لتأكيده في أقرب وقت."
+  },
+  "auth": {
+    "title": "دخول أنيق إلى مساحة JORINA",
+    "subtitle": "سجلي دخولك عبر Google للوصول إلى الطلبات، المفضلة، والعناوين المحفوظة.",
+    "continueWithGoogle": "المتابعة عبر Google",
+    "configMissing": "إعدادات Google غير مكتملة في البيئة المحلية حتى الآن."
+  },
+  "account": {
+    "overview": "نظرة عامة",
+    "orders": "طلباتي",
+    "returns": "الإرجاعات",
+    "favorites": "المفضلة",
+    "addresses": "العناوين",
+    "settings": "الإعدادات",
+    "paymentMethods": "طرق الدفع",
+    "recentOrders": "أحدث الطلبات",
+    "savedAddresses": "العناوين المحفوظة",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج"
+  },
+  "orderStatus": {
+    "PENDING": "قيد الانتظار",
+    "CONFIRMED": "تم التأكيد",
+    "SHIPPED": "تم الشحن",
+    "DELIVERED": "تم التسليم",
+    "CANCELLED": "تم الإلغاء",
+    "RETURNED": "تم الإرجاع"
+  },
+  "returnStatus": {
+    "REQUESTED": "تم الطلب",
+    "UNDER_REVIEW": "قيد المراجعة",
+    "APPROVED": "مقبول",
+    "REJECTED": "مرفوض",
+    "RECEIVED": "تم الاستلام",
+    "REFUNDED": "تمت المعالجة"
+  },
+  "footer": {
+    "newsletterTitle": "ابقِي على اطلاع بإصدارات JORINA",
+    "newsletterBody": "سجلي بريدك لاستقبال الإصدارات الجديدة والعروض المختارة.",
+    "copyright": "جميع الحقوق محفوظة لـ JORINA"
+  }
+}
