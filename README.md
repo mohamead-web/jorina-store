@@ -140,3 +140,4 @@ npm run start
 - The included product and category data are realistic mock seed entries for development.
 - The current logo asset is loaded from the provided JORINA brand logo and stored under `public/brand/jorina-logo.jpeg`.
 - Docker PostgreSQL in this project uses host port `5433` to avoid conflicts with any local PostgreSQL service already using `5432`.
+Fresh start
