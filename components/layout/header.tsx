@@ -17,7 +17,7 @@ type HeaderProps = {
   locale: "ar" | "en";
   cartCount: number;
   wishlistCount: number;
-  countryCode: "EG";
+  countryCode: "EG" | "SD";
   isAuthenticated: boolean;
 };
 
@@ -55,7 +55,7 @@ export function Header({
                 type="button"
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-white/70 text-text lg:hidden"
                 onClick={() => setMobileOpen(true)}
-                aria-label={locale === "ar" ? "فتح القائمة" : "Open menu"}
+                aria-label={locale === "ar" ? "ÙØªØ­ Ø§ÙÙØ§Ø¦ÙØ©" : "Open menu"}
               >
                 <Menu className="h-5 w-5" />
               </button>
@@ -119,7 +119,7 @@ export function Header({
                   {isAuthenticated
                     ? t("account.overview")
                     : locale === "ar"
-                      ? "دخول"
+                      ? "Ø¯Ø®ÙÙ"
                       : "Sign in"}
                 </Link>
               </Button>
@@ -154,7 +154,7 @@ export function Header({
               type="button"
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border"
               onClick={() => setMobileOpen(false)}
-              aria-label={locale === "ar" ? "إغلاق القائمة" : "Close menu"}
+              aria-label={locale === "ar" ? "Ø¥ØºÙØ§Ù Ø§ÙÙØ§Ø¦ÙØ©" : "Close menu"}
             >
               <X className="h-5 w-5" />
             </button>
@@ -167,7 +167,7 @@ export function Header({
               onClick={() => setMobileOpen(false)}
             >
               <Search className="mb-2 h-4 w-4" />
-              {locale === "ar" ? "بحث" : "Search"}
+              {locale === "ar" ? "Ø¨Ø­Ø«" : "Search"}
             </Link>
             <Link
               href={isAuthenticated ? "/account/favorites" : "/auth/sign-in"}
@@ -175,7 +175,7 @@ export function Header({
               onClick={() => setMobileOpen(false)}
             >
               <Heart className="mb-2 h-4 w-4" />
-              {locale === "ar" ? "المفضلة" : "Favorites"}
+              {locale === "ar" ? "Ø§ÙÙÙØ¶ÙØ©" : "Favorites"}
             </Link>
             <Link
               href="/cart"
@@ -183,7 +183,7 @@ export function Header({
               onClick={() => setMobileOpen(false)}
             >
               <ShoppingBag className="mb-2 h-4 w-4" />
-              {locale === "ar" ? "السلة" : "Cart"}
+              {locale === "ar" ? "Ø§ÙØ³ÙØ©" : "Cart"}
               {cartCount > 0 ? (
                 <span className="absolute end-3 top-3 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-text px-1 text-[10px] text-white">
                   {cartCount}
