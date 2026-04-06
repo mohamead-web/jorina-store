@@ -24,16 +24,16 @@ export function CountrySwitcher({
           startTransition(() => {
             void updatePreferencesAction({
               localeCode: locale,
-              countryCode: event.target.value as "EG"
+              countryCode: event.target.value as AppCountry
             });
           });
         }}
       >
         <option value="EG">
-          {locale === "ar" ? "مصر" : "Egypt"}
+          {locale === "ar" ? "ÙØµØ±" : "Egypt"}
         </option>
         <option value="SD">
-          {locale === "ar" ? "السودان" : "Sudan"}
+          {locale === "ar" ? "Ø§ÙØ³ÙØ¯Ø§Ù" : "Sudan"}
         </option>
       </select>
     </label>
