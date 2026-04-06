@@ -16,7 +16,7 @@ export function SettingsPanel({
 }: {
   locale: "ar" | "en";
   currentLocale: "ar" | "en";
-  currentCountry: "EG";
+  currentCountry: "EG" | "SD";
   profile: {
     name?: string | null;
     email?: string | null;
@@ -34,8 +34,8 @@ export function SettingsPanel({
 
           startTransition(async () => {
             await updatePreferencesAction({
-              localeCode: formData.get("localeCode"),
-              countryCode: formData.get("countryCode")
+              localeCode: formData.get("localeCode") as string,
+              countryCode: formData.get("countryCode") as string
             });
             router.refresh();
             toast.success(
@@ -67,6 +67,9 @@ export function SettingsPanel({
           >
             <option value="EG">
               {locale === "ar" ? "مصر" : "Egypt"}
+            </option>
+            <option value="SD">
+              {locale === "ar" ? "السودان" : "Sudan"}
             </option>
           </select>
         </label>
