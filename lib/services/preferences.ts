@@ -6,13 +6,13 @@ import { preferenceSchema, type PreferenceInput } from "@/lib/validators/prefere
 import type { AppCountry, AppCurrency, AppLocale } from "@/types/domain";
 
 export const availableLanguages = [
-  { code: "ar", label: "العربية", dir: "rtl" },
+  { code: "ar", label: "Ø§ÙØ¹Ø±Ø¨ÙØ©", dir: "rtl" },
   { code: "en", label: "English", dir: "ltr" }
 ] as const;
 
 export const availableCountries = [
-  { code: "EG", label: "مصر", shippingFee: 50, currency: "EGP" },
-  { code: "SD", label: "السودان", shippingFee: 0, currency: "SDG" }
+  { code: "EG", label: "ÙØµØ±", shippingFee: 50, currency: "EGP" },
+  { code: "SD", label: "Ø§ÙØ³ÙØ¯Ø§Ù", shippingFee: 0, currency: "SDG" }
 ] as const;
 
 const defaultPreference = {
