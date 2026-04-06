@@ -1,6 +1,6 @@
 export type AppLocale = "ar" | "en";
-export type AppCountry = "EG";
-export type AppCurrency = "EGP";
+export type AppCountry = "EG" | "SD";
+export type AppCurrency = "EGP" | "SDG";
 
 export type ProductSort = "featured" | "newest" | "priceAsc" | "priceDesc";
 

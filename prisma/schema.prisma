@@ -15,10 +15,12 @@ enum LocaleCode {
 
 enum CountryCode {
   EG
+  SD
 }
 
 enum CurrencyCode {
   EGP
+  SDG
 }
 
 enum ProductStatus {

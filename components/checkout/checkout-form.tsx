@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -29,14 +29,16 @@ export function CheckoutForm({
   onCityChange?: (cityCode: "cairo" | "giza" | "alexandria" | "other") => void;
 }) {
   const router = useRouter();
+  const initialCallingCode = defaults?.countryCode === "SD" ? "+249" : "+20";
+  const [callingCode, setCallingCode] = useState(initialCallingCode);
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       email: defaults?.email ?? "",
       fullName: defaults?.fullName ?? "",
       phoneNumber: defaults?.phoneNumber ?? "",
-      countryCode: "EG",
-      city: defaults?.city ?? "cairo",
+      countryCode: defaults?.countryCode ?? "EG",
+      city: defaults?.city ?? (defaults?.countryCode === "SD" ? "khartoum" : "cairo"),
       area: defaults?.area ?? "",
       detailedAddress: defaults?.detailedAddress ?? "",
       notes: defaults?.notes ?? "",
@@ -50,7 +52,9 @@ export function CheckoutForm({
       className="premium-card space-y-5 p-5 sm:p-6"
       onSubmit={form.handleSubmit((values) => {
         startTransition(async () => {
-          const result = await placeOrderAction(values);
+          const cleanPhone = values.phoneNumber.replace(/^0+/, "");
+          const finalValues = { ...values, phoneNumber: `${callingCode}${cleanPhone}` };
+          const result = await placeOrderAction(finalValues);
           if (result.success && result.orderNumber) {
             router.push(`/${locale}/checkout/success?order=${result.orderNumber}`);
             router.refresh();
@@ -80,25 +84,54 @@ export function CheckoutForm({
         placeholder={locale === "ar" ? "الاسم الكامل" : "Full name"}
         {...form.register("fullName")}
       />
-      <Input
-        autoComplete="tel"
-        placeholder={locale === "ar" ? "رقم الهاتف" : "Phone number"}
-        {...form.register("phoneNumber")}
-      />
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="flex gap-2">
         <select
-          className="flex h-11 w-full rounded-md border border-black/10 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black/20"
-          {...form.register("city")}
-          onChange={(e) => {
-            form.setValue("city", e.target.value);
-            onCityChange?.(e.target.value as "cairo" | "giza" | "alexandria" | "other");
-          }}
+          className="flex h-11 w-max min-w-[120px] rounded-md border border-black/10 bg-transparent px-2 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black/20"
+          value={callingCode}
+          onChange={(e) => setCallingCode(e.target.value)}
+          dir="ltr"
         >
-          <option value="cairo">{locale === "ar" ? "القاهرة" : "Cairo"}</option>
-          <option value="giza">{locale === "ar" ? "الجيزة" : "Giza"}</option>
-          <option value="alexandria">{locale === "ar" ? "الإسكندرية" : "Alexandria"}</option>
-          <option value="other">{locale === "ar" ? "محافظة أخرى" : "Other Governorate"}</option>
+          <option value="+20">🇪🇬 +20 (مصر)</option>
+          <option value="+249">🇸🇩 +249 (السودان)</option>
         </select>
+        <Input
+          className="flex-1 text-left"
+          dir="ltr"
+          type="tel"
+          autoComplete="tel"
+          placeholder={locale === "ar" ? "رقم الهاتف (بدون صفر)" : "Phone number (no zero)"}
+          {...form.register("phoneNumber")}
+        />
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {defaults?.countryCode === "SD" ? (
+          <select
+            className="flex h-11 w-full rounded-md border border-black/10 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black/20"
+            {...form.register("city")}
+            onChange={(e) => {
+              form.setValue("city", e.target.value);
+            }}
+          >
+            <option value="khartoum">{locale === "ar" ? "الخرطوم" : "Khartoum"}</option>
+            <option value="omdurman">{locale === "ar" ? "أم درمان" : "Omdurman"}</option>
+            <option value="bahri">{locale === "ar" ? "بحري" : "Bahri"}</option>
+            <option value="other">{locale === "ar" ? "أخرى" : "Other"}</option>
+          </select>
+        ) : (
+          <select
+            className="flex h-11 w-full rounded-md border border-black/10 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black/20"
+            {...form.register("city")}
+            onChange={(e) => {
+              form.setValue("city", e.target.value);
+              onCityChange?.(e.target.value as "cairo" | "giza" | "alexandria" | "other");
+            }}
+          >
+            <option value="cairo">{locale === "ar" ? "القاهرة" : "Cairo"}</option>
+            <option value="giza">{locale === "ar" ? "الجيزة" : "Giza"}</option>
+            <option value="alexandria">{locale === "ar" ? "الإسكندرية" : "Alexandria"}</option>
+            <option value="other">{locale === "ar" ? "محافظة أخرى" : "Other Governorate"}</option>
+          </select>
+        )}
         <Input
           autoComplete="address-level3"
           placeholder={locale === "ar" ? "الحي / المنطقة" : "Area / district"}

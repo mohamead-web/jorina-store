@@ -11,7 +11,8 @@ export const availableLanguages = [
 ] as const;
 
 export const availableCountries = [
-  { code: "EG", label: "مصر", shippingFee: 50, currency: "EGP" }
+  { code: "EG", label: "مصر", shippingFee: 50, currency: "EGP" },
+  { code: "SD", label: "السودان", shippingFee: 0, currency: "SDG" }
 ] as const;
 
 const defaultPreference = {
@@ -38,9 +39,9 @@ export async function getResolvedPreferences(userId?: string | null) {
 
     if (preference) {
       return {
-        localeCode: preference.localeCode === "en" ? "en" : "ar",
-        countryCode: "EG",
-        currencyCode: "EGP"
+        localeCode: (preference.localeCode === "en" ? "en" : "ar") as AppLocale,
+        countryCode: (preference.countryCode === "SD" ? "SD" : "EG") as AppCountry,
+        currencyCode: (preference.countryCode === "SD" ? "SDG" : "EGP") as AppCurrency
       } satisfies ResolvedPreference;
     }
   }
@@ -48,7 +49,7 @@ export async function getResolvedPreferences(userId?: string | null) {
   return {
     ...defaultPreference,
     localeCode: cookieLocale === "en" ? "en" : defaultPreference.localeCode,
-    countryCode: cookieCountry === "EG" ? "EG" : defaultPreference.countryCode
+    countryCode: cookieCountry === "SD" ? "SD" : (cookieCountry === "EG" ? "EG" : defaultPreference.countryCode)
   } satisfies ResolvedPreference;
 }
 
@@ -78,13 +79,13 @@ export async function saveUserPreferences(userId: string, input: PreferenceInput
     update: {
       localeCode: payload.localeCode,
       countryCode: payload.countryCode,
-      currencyCode: "EGP"
+      currencyCode: payload.countryCode === "SD" ? "SDG" : "EGP"
     },
     create: {
       userId,
       localeCode: payload.localeCode,
       countryCode: payload.countryCode,
-      currencyCode: "EGP"
+      currencyCode: payload.countryCode === "SD" ? "SDG" : "EGP"
     }
   });
 
