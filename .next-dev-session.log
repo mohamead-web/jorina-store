@@ -1,0 +1,602 @@
+
+> jorina-luxury-cosmetics@0.1.0 dev
+> next dev --hostname 0.0.0.0
+
+▲ Next.js 16.2.2 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+- Environments: .env
+✓ Ready in 259ms
+⚠ Turbopack's filesystem cache has been deleted because we previously detected an internal error in Turbopack. Builds or page loads may be slower as a result.
+
+○ Compiling /[locale] ...
+(node:8080) Warning: SECURITY WARNING: The SSL modes 'prefer', 'require', and 'verify-ca' are treated as aliases for 'verify-full'.
+In the next major version (pg-connection-string v3.0.0 and pg v9.0.0), these modes will adopt standard libpq semantics, which have weaker security guarantees.
+
+To prepare for this change:
+- If you want the current behavior, explicitly use 'sslmode=verify-full'
+- If you want libpq compatibility now, use 'uselibpqcompat=true&sslmode=require'
+
+See https://www.postgresql.org/docs/current/libpq-ssl.html for libpq SSL mode definitions.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Image with src "/assets/hero/ai-luxury-bg-v7.png" is using quality "100" which is not configured in images.qualities [60, 75, 90]. Please update your config to [100, 60, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET /en 200 in 2.8s (next.js: 8ms, proxy.ts: 8ms, application-code: 2.8s)
+ GET /en 200 in 7.9s (next.js: 3.9s, proxy.ts: 8ms, application-code: 4.0s)
+ GET /ar 200 in 1252ms (next.js: 6ms, proxy.ts: 3ms, application-code: 1243ms)
+ GET /en 200 in 3.0s (next.js: 14ms, proxy.ts: 5ms, application-code: 2.9s)
+[browser] Image with src "/assets/hero/ai-luxury-bg-v7.png" is using quality "100" which is not configured in images.qualities [60, 75, 90]. Please update your config to [100, 60, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ POST /en 200 in 5.5s (next.js: 19ms, proxy.ts: 13ms, application-code: 5.5s)
+  └─ ƒ addToCartAction({"localeCode":"en","productId":"cmnm4ui8p001tb8tdos1163z5","quantity":1}) in 2445ms lib/actions/cart-actions.ts
+ GET /en 200 in 3.1s (next.js: 14ms, proxy.ts: 4ms, application-code: 3.1s)
+ GET /en/cart 200 in 2.3s (next.js: 789ms, proxy.ts: 12ms, application-code: 1449ms)
+[browser] ⨯ unhandledRejection: Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+    at <unknown> (components/checkout/cart-line-item.tsx:38:6)
+  36 |   // Sync state if it changes from the server (e.g. after refresh or failure)
+  37 |   import("react").then(({ useEffect }) => {
+> 38 |      useEffect(() => {
+     |      ^
+  39 |         setQuantity(item.quantity);
+  40 |      }, [item.quantity]);
+  41 |   });
+[browser] ⨯ unhandledRejection: Error: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.
+    at <unknown> (components/checkout/cart-line-item.tsx:38:6)
+  36 |   // Sync state if it changes from the server (e.g. after refresh or failure)
+  37 |   import("react").then(({ useEffect }) => {
+> 38 |      useEffect(() => {
+     |      ^
+  39 |         setQuantity(item.quantity);
+  40 |      }, [item.quantity]);
+  41 |   });
+ GET /en/checkout 200 in 2.6s (next.js: 1164ms, proxy.ts: 9ms, application-code: 1430ms)
+ POST /en/checkout 200 in 551ms (next.js: 15ms, proxy.ts: 8ms, application-code: 529ms)
+  └─ ƒ reverseGeocode(30.0444, 31.2357) in 515ms lib/services/location-service.ts
+ POST /en/checkout 200 in 307ms (next.js: 12ms, proxy.ts: 5ms, application-code: 290ms)
+  └─ ƒ reverseGeocode(30.041067680825627, 31.239603180622513) in 284ms lib/services/location-service.ts
+ POST /en/checkout 200 in 524ms (next.js: 15ms, proxy.ts: 4ms, application-code: 504ms)
+  └─ ƒ reverseGeocode(30.03933102557325, 31.24143750416013) in 491ms lib/services/location-service.ts
+ POST /en/checkout 200 in 334ms (next.js: 17ms, proxy.ts: 4ms, application-code: 313ms)
+  └─ ƒ reverseGeocode(30.03846268653213, 31.242354665928943) in 303ms lib/services/location-service.ts
+ POST /en/checkout 200 in 389ms (next.js: 11ms, proxy.ts: 5ms, application-code: 374ms)
+  └─ ƒ reverseGeocode(30.03828857451396, 31.242233889666117) in 368ms lib/services/location-service.ts
+ POST /en/checkout 200 in 478ms (next.js: 22ms, proxy.ts: 9ms, application-code: 447ms)
+  └─ ƒ reverseGeocode(30.03891555566336, 31.241600788677722) in 439ms lib/services/location-service.ts
+ POST /en/checkout 200 in 578ms (next.js: 23ms, proxy.ts: 10ms, application-code: 546ms)
+  └─ ƒ reverseGeocode(30.038766938268182, 31.241906608646712) in 536ms lib/services/location-service.ts
+ GET /en/checkout/success?order=JR8214102956 200 in 823ms (next.js: 776ms, proxy.ts: 5ms, application-code: 42ms)
+ POST /en/checkout 200 in 7.3s (next.js: 16ms, proxy.ts: 6ms, application-code: 7.3s)
+  └─ ƒ placeOrderAction({"area":"باب اللوق","city":"cairo","countryCode":"EG","...":"8 items not stringified"}) in 4713ms lib/actions/checkout-actions.ts
+ GET /en/checkout/success?order=JR8214102956 200 in 2.6s (next.js: 13ms, proxy.ts: 5ms, application-code: 2.6s)
+ GET /en 200 in 1814ms (next.js: 12ms, proxy.ts: 6ms, application-code: 1796ms)
+prisma:error 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$db$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].userPreference.upsert()` invocation in
+C:\Users\IT-PC\Desktop\jorina2\.next\dev\server\chunks\ssr\[root-of-the-server]__0hbsksk._.js:1535:152
+
+  1532 }
+  1533 async function saveUserPreferences(userId, input) {
+  1534     const payload = __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$validators$2f$preferences$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["preferenceSchema"].parse(input);
+→ 1535     await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$db$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].userPreference.upsert(
+Foreign key constraint violated on the constraint: `UserPreference_countryCode_fkey`
+⨯ Error [PrismaClientKnownRequestError]: 
+Invalid `{imported module ./lib/db/prisma.ts}["prisma"].userPreference.upsert()` invocation in
+C:\Users\IT-PC\Desktop\jorina2\.next\dev\server\chunks\ssr\[root-of-the-server]__0hbsksk._.js:1535:152
+
+  1532 }
+  1533 async function saveUserPreferences(userId, input) {
+  1534     const payload = {imported module ./lib/validators/preferences.ts}["preferenceSchema"].parse(input);
+→ 1535     await {imported module ./lib/db/prisma.ts}["prisma"].userPreference.upsert(
+Foreign key constraint violated on the constraint: `UserPreference_countryCode_fkey`
+    at <unknown> (lib\services\preferences.ts:85:31)
+    at async saveUserPreferences (lib\services\preferences.ts:85:3)
+    at async updatePreferencesAction (lib\actions\preference-actions.ts:17:5)
+  83 |   const payload = preferenceSchema.parse(input);
+  84 |
+> 85 |   await prisma.userPreference.upsert({
+     |                               ^
+  86 |     where: { userId },
+  87 |     update: {
+  88 |       localeCode: payload.localeCode, {
+  code: 'P2003',
+  meta: {
+    modelName: 'UserPreference',
+    driverAdapterError: Error [DriverAdapterError]: ForeignKeyConstraintViolation
+        at async saveUserPreferences (lib\services\preferences.ts:85:3)
+        at async updatePreferencesAction (lib\actions\preference-actions.ts:17:5)
+      83 |   const payload = preferenceSchema.parse(input);
+      84 |
+    > 85 |   await prisma.userPreference.upsert({
+         |   ^
+      86 |     where: { userId },
+      87 |     update: {
+      88 |       localeCode: payload.localeCode, {
+      [cause]: [Object]
+    }
+  },
+  clientVersion: '7.6.0',
+  digest: '1936618614'
+}
+ POST /en 500 in 2.2s (next.js: 19ms, proxy.ts: 11ms, application-code: 2.2s)
+  └─ ƒ updatePreferencesAction({"countryCode":"SD","localeCode":"en"}) in 1458ms lib/actions/preference-actions.ts
+[browser] Uncaught PrismaClientKnownRequestError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$db$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].userPreference.upsert()` invocation in
+C:\Users\IT-PC\Desktop\jorina2\.next\dev\server\chunks\ssr\[root-of-the-server]__0hbsksk._.js:1535:152
+
+  1532 }
+  1533 async function saveUserPreferences(userId, input) {
+  1534     const payload = __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$validators$2f$preferences$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["preferenceSchema"].parse(input);
+→ 1535     await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$db$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].userPreference.upsert(
+Foreign key constraint violated on the constraint: `UserPreference_countryCode_fkey`
+    at <unknown> (lib\services\preferences.ts:85:31)
+    at  saveUserPreferences (lib\services\preferences.ts:85:3)
+    at  updatePreferencesAction (lib\actions\preference-actions.ts:17:5)
+  83 |   const payload = preferenceSchema.parse(input);
+  84 |
+> 85 |   await prisma.userPreference.upsert({
+     |                               ^
+  86 |     where: { userId },
+  87 |     update: {
+  88 |       localeCode: payload.localeCode,
+[browser] Image with src "/assets/hero/ai-luxury-bg-v7.png" is using quality "100" which is not configured in images.qualities [60, 75, 90]. Please update your config to [100, 60, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET /api/auth/session 200 in 1189ms (next.js: 848ms, application-code: 341ms)
+ GET /api/auth/session 200 in 431ms (next.js: 6ms, application-code: 425ms)
+ GET /api/auth/session 200 in 7ms (next.js: 2ms, application-code: 5ms)
+ POST /api/auth/_log 200 in 11ms (next.js: 1776µs, application-code: 9ms)
+ GET /en 200 in 3.2s (next.js: 18ms, proxy.ts: 10ms, application-code: 3.2s)
+ GET /api/auth/session 200 in 332ms (next.js: 1768µs, application-code: 330ms)
+[browser] Image with src "/assets/hero/ai-luxury-bg-v7.png" is using quality "100" which is not configured in images.qualities [60, 75, 90]. Please update your config to [100, 60, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+prisma:error 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$db$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].userPreference.upsert()` invocation in
+C:\Users\IT-PC\Desktop\jorina2\.next\dev\server\chunks\ssr\[root-of-the-server]__0hbsksk._.js:1535:152
+
+  1532 }
+  1533 async function saveUserPreferences(userId, input) {
+  1534     const payload = __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$validators$2f$preferences$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["preferenceSchema"].parse(input);
+→ 1535     await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$db$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].userPreference.upsert(
+Foreign key constraint violated on the constraint: `UserPreference_countryCode_fkey`
+⨯ Error [PrismaClientKnownRequestError]: 
+Invalid `{imported module ./lib/db/prisma.ts}["prisma"].userPreference.upsert()` invocation in
+C:\Users\IT-PC\Desktop\jorina2\.next\dev\server\chunks\ssr\[root-of-the-server]__0hbsksk._.js:1535:152
+
+  1532 }
+  1533 async function saveUserPreferences(userId, input) {
+  1534     const payload = {imported module ./lib/validators/preferences.ts}["preferenceSchema"].parse(input);
+→ 1535     await {imported module ./lib/db/prisma.ts}["prisma"].userPreference.upsert(
+Foreign key constraint violated on the constraint: `UserPreference_countryCode_fkey`
+    at <unknown> (lib\services\preferences.ts:85:31)
+    at async saveUserPreferences (lib\services\preferences.ts:85:3)
+    at async updatePreferencesAction (lib\actions\preference-actions.ts:17:5)
+  83 |   const payload = preferenceSchema.parse(input);
+  84 |
+> 85 |   await prisma.userPreference.upsert({
+     |                               ^
+  86 |     where: { userId },
+  87 |     update: {
+  88 |       localeCode: payload.localeCode, {
+  code: 'P2003',
+  meta: {
+    modelName: 'UserPreference',
+    driverAdapterError: Error [DriverAdapterError]: ForeignKeyConstraintViolation
+        at async saveUserPreferences (lib\services\preferences.ts:85:3)
+        at async updatePreferencesAction (lib\actions\preference-actions.ts:17:5)
+      83 |   const payload = preferenceSchema.parse(input);
+      84 |
+    > 85 |   await prisma.userPreference.upsert({
+         |   ^
+      86 |     where: { userId },
+      87 |     update: {
+      88 |       localeCode: payload.localeCode, {
+      [cause]: [Object]
+    }
+  },
+  clientVersion: '7.6.0',
+  digest: '1936618614'
+}
+ POST /en 500 in 1212ms (next.js: 17ms, proxy.ts: 10ms, application-code: 1184ms)
+  └─ ƒ updatePreferencesAction({"countryCode":"SD","localeCode":"en"}) in 517ms lib/actions/preference-actions.ts
+[browser] Uncaught PrismaClientKnownRequestError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$db$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].userPreference.upsert()` invocation in
+C:\Users\IT-PC\Desktop\jorina2\.next\dev\server\chunks\ssr\[root-of-the-server]__0hbsksk._.js:1535:152
+
+  1532 }
+  1533 async function saveUserPreferences(userId, input) {
+  1534     const payload = __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$validators$2f$preferences$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["preferenceSchema"].parse(input);
+→ 1535     await __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$db$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].userPreference.upsert(
+Foreign key constraint violated on the constraint: `UserPreference_countryCode_fkey`
+    at <unknown> (lib\services\preferences.ts:85:31)
+    at  saveUserPreferences (lib\services\preferences.ts:85:3)
+    at  updatePreferencesAction (lib\actions\preference-actions.ts:17:5)
+  83 |   const payload = preferenceSchema.parse(input);
+  84 |
+> 85 |   await prisma.userPreference.upsert({
+     |                               ^
+  86 |     where: { userId },
+  87 |     update: {
+  88 |       localeCode: payload.localeCode,
+ GET /api/auth/session 200 in 1317ms (next.js: 17ms, application-code: 1299ms)
+ GET /api/auth/session 200 in 352ms (next.js: 10ms, application-code: 342ms)
+✓ Compiled in 56ms
+ GET /en 200 in 5.7s (next.js: 96ms, proxy.ts: 3ms, application-code: 5.6s)
+ GET /en 200 in 5.3s (next.js: 6ms, proxy.ts: 2ms, application-code: 5.3s)
+ GET /en 200 in 5.5s (next.js: 3ms, proxy.ts: 3ms, application-code: 5.5s)
+ GET /en 200 in 5.1s (next.js: 25ms, proxy.ts: 4ms, application-code: 5.1s)
+ GET /en 200 in 5.2s (next.js: 7ms, proxy.ts: 4ms, application-code: 5.2s)
+ GET /en 200 in 5.3s (next.js: 46ms, proxy.ts: 4ms, application-code: 5.2s)
+ GET /en 200 in 2.1s (next.js: 6ms, proxy.ts: 3ms, application-code: 2.1s)
+ GET /en 200 in 2.2s (next.js: 4ms, proxy.ts: 2ms, application-code: 2.2s)
+ GET /en/shop 200 in 3.8s (next.js: 770ms, proxy.ts: 3ms, application-code: 3.0s)
+ GET /en/shop 200 in 2.5s (next.js: 7ms, proxy.ts: 4ms, application-code: 2.5s)
+Image with src "/assets/hero/ai-luxury-bg-v7.png" is using quality "100" which is not configured in images.qualities [60, 75, 90]. Please update your config to [100, 60, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET /en 200 in 2.6s (next.js: 8ms, proxy.ts: 2ms, application-code: 2.6s)
+ GET /en/shop 200 in 2.3s (next.js: 6ms, proxy.ts: 2ms, application-code: 2.3s)
+ GET /en/shop 200 in 2.7s (next.js: 4ms, proxy.ts: 3ms, application-code: 2.7s)
+ GET /en/shop 200 in 3.0s (next.js: 49ms, proxy.ts: 5ms, application-code: 3.0s)
+ GET /en 200 in 3.1s (next.js: 11ms, proxy.ts: 6ms, application-code: 3.0s)
+ GET /en/shop 200 in 3.0s (next.js: 80ms, proxy.ts: 2ms, application-code: 3.0s)
+ GET /en/shop 200 in 2.3s (next.js: 8ms, proxy.ts: 3ms, application-code: 2.3s)
+ GET /en/shop 200 in 2.7s (next.js: 4ms, proxy.ts: 4ms, application-code: 2.7s)
+ GET /en/shop 200 in 2.2s (next.js: 9ms, proxy.ts: 3ms, application-code: 2.2s)
+ GET /en/shop 200 in 2.7s (next.js: 3ms, proxy.ts: 4ms, application-code: 2.7s)
+ GET /api/auth/session 200 in 403ms (next.js: 6ms, application-code: 397ms)
+ GET /en 200 in 3.4s (next.js: 13ms, proxy.ts: 2ms, application-code: 3.4s)
+[browser] Image with src "/assets/hero/ai-luxury-bg-v7.png" is using quality "100" which is not configured in images.qualities [60, 75, 90]. Please update your config to [100, 60, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET /en 200 in 2.0s (next.js: 14ms, proxy.ts: 3ms, application-code: 2.0s)
+[browser] Image with src "/assets/hero/ai-luxury-bg-v7.png" is using quality "100" which is not configured in images.qualities [60, 75, 90]. Please update your config to [100, 60, 75, 90].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ POST /en 200 in 2.7s (next.js: 15ms, proxy.ts: 9ms, application-code: 2.7s)
+  └─ ƒ updatePreferencesAction({"countryCode":"SD","localeCode":"en"}) in 492ms lib/actions/preference-actions.ts
+ GET /en 200 in 2.2s (next.js: 11ms, proxy.ts: 4ms, application-code: 2.2s)
+ GET /api/auth/session 200 in 1334ms (next.js: 14ms, application-code: 1320ms)
+ GET /api/auth/session 200 in 1382ms (next.js: 13ms, application-code: 1369ms)
+✓ Compiled in 56ms
+✓ Compiled in 81ms
+✓ Compiled in 97ms
+✓ Compiled in 64ms
+ GET /en 200 in 2.9s (next.js: 94ms, proxy.ts: 6ms, application-code: 2.8s)
+ GET /en 200 in 2.8s (next.js: 16ms, proxy.ts: 5ms, application-code: 2.8s)
+ GET /en 200 in 1184ms (next.js: 9ms, proxy.ts: 4ms, application-code: 1172ms)
+ GET /en 200 in 2.7s (next.js: 13ms, proxy.ts: 5ms, application-code: 2.7s)
+ GET /en 200 in 2.7s (next.js: 42ms, proxy.ts: 5ms, application-code: 2.7s)
+✓ Compiled in 45ms
+ GET /en 200 in 2.9s (next.js: 145ms, proxy.ts: 4ms, application-code: 2.7s)
+ GET /en 200 in 2.7s (next.js: 3ms, proxy.ts: 6ms, application-code: 2.7s)
+ GET /api/auth/session 200 in 1477ms (next.js: 19ms, application-code: 1458ms)
+ GET /en 200 in 3.1s (next.js: 16ms, proxy.ts: 13ms, application-code: 3.0s)
+ GET /api/auth/session 200 in 1304ms (next.js: 9ms, application-code: 1295ms)
+✓ Compiled in 419ms
+⨯ ./components/layout/header.tsx:21:2
+Expected ident
+  [90m19 |[0m   cartCount: number;
+  [90m20 |[0m   wishlistCount: number;
+[31m[1m>[0m [90m21 |[0m <<<<<<< [33mHEAD[0m
+  [90m   |[0m  [31m[1m^[0m
+  [90m22 |[0m   countryCode: [32m"EG"[0m | [32m"SD"[0m;
+  [90m23 |[0m =======
+  [90m24 |[0m   countryCode: [33mAppCountry[0m;
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/layout/header.tsx
+    ./app/[locale]/layout.tsx
+
+
+
+./components/navigation/country-switcher.tsx:30:1
+Merge conflict marker encountered.
+  [90m28 |[0m             [36mawait[0m updatePreferencesAction({
+  [90m29 |[0m               localeCode: locale,
+[31m[1m>[0m [90m30 |[0m <<<<<<< [33mHEAD[0m
+  [90m   |[0m [31m[1m^^^^^^^[0m
+  [90m31 |[0m               countryCode: event.target.value [36mas[0m [33mAppCountry[0m
+  [90m32 |[0m =======
+  [90m33 |[0m               countryCode: newCountry
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+
+./components/navigation/country-switcher.tsx:32:1
+Merge conflict marker encountered.
+  [90m30 |[0m <<<<<<< [33mHEAD[0m
+  [90m31 |[0m               countryCode: event.target.value [36mas[0m [33mAppCountry[0m
+[31m[1m>[0m [90m32 |[0m =======
+  [90m   |[0m [31m[1m^^^^^^^[0m
+  [90m33 |[0m               countryCode: newCountry
+  [90m34 |[0m >>>>>>> [35m868776[0mf ([33mFinalize[0m [33mSudan[0m support and mobile hero refresh)
+  [90m35 |[0m             });
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+ GET /en 500 in 949ms (next.js: 753ms, proxy.ts: 57ms, application-code: 139ms)
+⨯ ./components/layout/header.tsx:21:2
+Expected ident
+  [90m19 |[0m   cartCount: number;
+  [90m20 |[0m   wishlistCount: number;
+[31m[1m>[0m [90m21 |[0m <<<<<<< [33mHEAD[0m
+  [90m   |[0m  [31m[1m^[0m
+  [90m22 |[0m   countryCode: [32m"EG"[0m | [32m"SD"[0m;
+  [90m23 |[0m =======
+  [90m24 |[0m   countryCode: [33mAppCountry[0m;
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/layout/header.tsx
+    ./app/[locale]/layout.tsx
+
+
+
+./components/navigation/country-switcher.tsx:30:1
+Merge conflict marker encountered.
+  [90m28 |[0m             [36mawait[0m updatePreferencesAction({
+  [90m29 |[0m               localeCode: locale,
+[31m[1m>[0m [90m30 |[0m <<<<<<< [33mHEAD[0m
+  [90m   |[0m [31m[1m^^^^^^^[0m
+  [90m31 |[0m               countryCode: event.target.value [36mas[0m [33mAppCountry[0m
+  [90m32 |[0m =======
+  [90m33 |[0m               countryCode: newCountry
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+
+./components/navigation/country-switcher.tsx:32:1
+Merge conflict marker encountered.
+  [90m30 |[0m <<<<<<< [33mHEAD[0m
+  [90m31 |[0m               countryCode: event.target.value [36mas[0m [33mAppCountry[0m
+[31m[1m>[0m [90m32 |[0m =======
+  [90m   |[0m [31m[1m^^^^^^^[0m
+  [90m33 |[0m               countryCode: newCountry
+  [90m34 |[0m >>>>>>> [35m868776[0mf ([33mFinalize[0m [33mSudan[0m support and mobile hero refresh)
+  [90m35 |[0m             });
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+⨯ ./components/layout/header.tsx:21:2
+Expected ident
+  [90m19 |[0m   cartCount: number;
+  [90m20 |[0m   wishlistCount: number;
+[31m[1m>[0m [90m21 |[0m <<<<<<< [33mHEAD[0m
+  [90m   |[0m  [31m[1m^[0m
+  [90m22 |[0m   countryCode: [32m"EG"[0m | [32m"SD"[0m;
+  [90m23 |[0m =======
+  [90m24 |[0m   countryCode: [33mAppCountry[0m;
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/layout/header.tsx
+    ./app/[locale]/layout.tsx
+
+
+
+./components/navigation/country-switcher.tsx:30:1
+Merge conflict marker encountered.
+  [90m28 |[0m             [36mawait[0m updatePreferencesAction({
+  [90m29 |[0m               localeCode: locale,
+[31m[1m>[0m [90m30 |[0m <<<<<<< [33mHEAD[0m
+  [90m   |[0m [31m[1m^^^^^^^[0m
+  [90m31 |[0m               countryCode: event.target.value [36mas[0m [33mAppCountry[0m
+  [90m32 |[0m =======
+  [90m33 |[0m               countryCode: newCountry
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+
+./components/navigation/country-switcher.tsx:32:1
+Merge conflict marker encountered.
+  [90m30 |[0m <<<<<<< [33mHEAD[0m
+  [90m31 |[0m               countryCode: event.target.value [36mas[0m [33mAppCountry[0m
+[31m[1m>[0m [90m32 |[0m =======
+  [90m   |[0m [31m[1m^^^^^^^[0m
+  [90m33 |[0m               countryCode: newCountry
+  [90m34 |[0m >>>>>>> [35m868776[0mf ([33mFinalize[0m [33mSudan[0m support and mobile hero refresh)
+  [90m35 |[0m             });
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+ GET /en 500 in 46ms (next.js: 21ms, proxy.ts: 12ms, application-code: 13ms)
+ GET /en 500 in 44ms (next.js: 27ms, proxy.ts: 7ms, application-code: 10ms)
+[browser] Uncaught Error: ./components/layout/header.tsx:21:2
+Expected ident
+  19 |   cartCount: number;
+  20 |   wishlistCount: number;
+> 21 | <<<<<<< HEAD
+     |  ^
+  22 |   countryCode: "EG" | "SD";
+  23 | =======
+  24 |   countryCode: AppCountry;
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./components/layout/header.tsx
+    ./app/[locale]/layout.tsx
+
+
+    at <unknown> (Error: ./components/layout/header.tsx:21:2)
+    at <unknown> (Error: (./components/layout/header.tsx:21:2)
+⨯ ./components/navigation/country-switcher.tsx:30:1
+Merge conflict marker encountered.
+  [90m28 |[0m             [36mawait[0m updatePreferencesAction({
+  [90m29 |[0m               localeCode: locale,
+[31m[1m>[0m [90m30 |[0m <<<<<<< [33mHEAD[0m
+  [90m   |[0m [31m[1m^^^^^^^[0m
+  [90m31 |[0m               countryCode: event.target.value [36mas[0m [33mAppCountry[0m
+  [90m32 |[0m =======
+  [90m33 |[0m               countryCode: newCountry
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+
+./components/navigation/country-switcher.tsx:32:1
+Merge conflict marker encountered.
+  [90m30 |[0m <<<<<<< [33mHEAD[0m
+  [90m31 |[0m               countryCode: event.target.value [36mas[0m [33mAppCountry[0m
+[31m[1m>[0m [90m32 |[0m =======
+  [90m   |[0m [31m[1m^^^^^^^[0m
+  [90m33 |[0m               countryCode: newCountry
+  [90m34 |[0m >>>>>>> [35m868776[0mf ([33mFinalize[0m [33mSudan[0m support and mobile hero refresh)
+  [90m35 |[0m             });
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+ GET /en 500 in 103ms (next.js: 49ms, proxy.ts: 32ms, application-code: 23ms)
+[browser] Uncaught Error: ./components/navigation/country-switcher.tsx:32:1
+Merge conflict marker encountered.
+  30 | <<<<<<< HEAD
+  31 |               countryCode: event.target.value as AppCountry
+> 32 | =======
+     | ^^^^^^^
+  33 |               countryCode: newCountry
+  34 | >>>>>>> 868776f (Finalize Sudan support and mobile hero refresh)
+  35 |             });
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./components/navigation/country-switcher.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Client Component Browser]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/navigation/country-switcher.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Client Component SSR]
+    ./components/layout/header.tsx [Server Component]
+    ./app/[locale]/layout.tsx [Server Component]
+
+
+    at <unknown> (Error: ./components/navigation/country-switcher.tsx:32:1)
+    at <unknown> (Error: (./components/navigation/country-switcher.tsx:32:1)
+✓ Compiled in 74ms
+ GET /en 200 in 4.0s (next.js: 205ms, proxy.ts: 3ms, application-code: 3.8s)
+ GET /api/auth/session 200 in 1419ms (next.js: 62ms, application-code: 1357ms)
