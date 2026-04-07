@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Form from "next/form";
 
 import { MobileShopFilters } from "@/components/shop/mobile-shop-filters";
 import { ProductGrid } from "@/components/shop/product-grid";
@@ -75,7 +76,7 @@ export default async function ShopPage({
         />
 
         <Reveal delay={0.06}>
-          <form className="premium-card mt-8 hidden gap-3 p-4 lg:grid lg:grid-cols-[1fr_220px_180px_auto]">
+          <Form action={`/${typedLocale}/shop`} scroll={false} className="premium-card mt-8 hidden gap-3 p-4 lg:grid lg:grid-cols-[1fr_220px_180px_auto]">
             <input
               type="text"
               name="q"
@@ -112,7 +113,7 @@ export default async function ShopPage({
             <button className="h-12 rounded-full bg-text px-5 text-sm text-white">
               {typedLocale === "ar" ? "تطبيق" : "Apply"}
             </button>
-          </form>
+          </Form>
         </Reveal>
 
         <div className="mt-6 lg:mt-8">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 
 import { BrandStatement } from "@/components/home/brand-statement";
 import { CategoryStrip } from "@/components/home/category-strip";
@@ -40,6 +41,14 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   const typedLocale = locale as "ar" | "en";
+  const headersList = await headers();
+  const userAgent = headersList.get("user-agent") ?? "";
+  const mobileHint = headersList.get("sec-ch-ua-mobile");
+  const initialViewport =
+    mobileHint === "?1" ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent)
+      ? "mobile"
+      : "desktop";
   const [user, homepage] = await Promise.all([
     getCurrentUser(),
     getHomepageData(typedLocale)
@@ -48,7 +57,7 @@ export default async function HomePage({
 
   return (
     <>
-      <HeroSection locale={typedLocale} />
+      <HeroSection locale={typedLocale} initialViewport={initialViewport} />
       <CategoryStrip locale={typedLocale} categories={homepage.categories} />
       <CollectionSection
         locale={typedLocale}

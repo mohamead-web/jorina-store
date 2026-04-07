@@ -12,6 +12,7 @@ import { addToCartAction } from "@/lib/actions/cart-actions";
 import { toggleWishlistAction } from "@/lib/actions/wishlist-actions";
 import { Link } from "@/lib/i18n/navigation";
 import { formatCurrency } from "@/lib/utils";
+import { usePreferences } from "@/components/layout/providers";
 
 type ProductCardProps = {
   locale: "ar" | "en";
@@ -38,9 +39,10 @@ export function ProductCard({
   const t = useTranslations("product");
   const router = useRouter();
   const { status } = useSession();
+  const { currencyCode } = usePreferences();
   const [favorite, setFavorite] = useState(isFavorite);
-  const [isPending, setIsPending] = useState(false);
-
+  const [isCartPending, setIsCartPending] = useState(false);
+  const [isWishlistPending, setIsWishlistPending] = useState(false);
   return (
     <article className="group flex flex-col h-full overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:border-black/10 sm:rounded-[1.8rem]">
       <div className="relative w-full overflow-hidden bg-[#fafaf8]">
@@ -62,14 +64,14 @@ export function ProductCard({
               return;
             }
 
-            setIsPending(true);
+            setIsWishlistPending(true);
             startTransition(async () => {
               const result = await toggleWishlistAction({
                 localeCode: locale,
                 productId: product.id
               });
               setFavorite(Boolean(result.saved));
-              setIsPending(false);
+              setIsWishlistPending(false);
               router.refresh();
               toast.success(
                 result.saved
@@ -82,7 +84,7 @@ export function ProductCard({
               );
             });
           }}
-          disabled={isPending}
+          disabled={isWishlistPending}
         >
           <Heart className={`h-4 w-4 ${favorite ? "fill-current text-blush-strong" : ""}`} />
         </button>
@@ -114,11 +116,11 @@ export function ProductCard({
 
         <div className="flex items-center gap-3">
           <span className="text-sm font-semibold text-text sm:text-[15px]">
-            {formatCurrency(product.price, locale)}
+            {formatCurrency(product.price, locale, currencyCode)}
           </span>
           {product.compareAtPrice ? (
             <span className="text-xs text-text-muted line-through sm:text-sm">
-              {formatCurrency(product.compareAtPrice, locale)}
+              {formatCurrency(product.compareAtPrice, locale, currencyCode)}
             </span>
           ) : null}
         </div>
@@ -134,16 +136,16 @@ export function ProductCard({
           <button
             type="button"
             className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-text px-4 text-sm text-white transition hover:bg-[#222] sm:w-auto sm:px-5"
-            disabled={!product.inStock || isPending}
+            disabled={!product.inStock || isCartPending}
             onClick={() => {
-              setIsPending(true);
+              setIsCartPending(true);
               startTransition(async () => {
                 await addToCartAction({
                   localeCode: locale,
                   productId: product.id,
                   quantity: 1
                 });
-                setIsPending(false);
+                setIsCartPending(false);
                 router.refresh();
                 toast.success(locale === "ar" ? "تمت الإضافة إلى السلة" : "Added to cart");
               });

@@ -15,6 +15,25 @@ export const availableCountries = [
   { code: "SD", label: "Ø§ÙØ³ÙØ¯Ø§Ù", shippingFee: 0, currency: "SDG" }
 ] as const;
 
+const supportedCountryRecords = [
+  {
+    code: "EG" as const,
+    name: "Egypt",
+    nativeName: "مصر",
+    phoneCode: "+20",
+    currencyCode: "EGP" as const,
+    defaultShippingFee: 50
+  },
+  {
+    code: "SD" as const,
+    name: "Sudan",
+    nativeName: "السودان",
+    phoneCode: "+249",
+    currencyCode: "SDG" as const,
+    defaultShippingFee: 0
+  }
+] as const;
+
 const defaultPreference = {
   localeCode: "ar" as const,
   countryCode: "EG" as const,
@@ -27,10 +46,44 @@ export type ResolvedPreference = {
   currencyCode: AppCurrency;
 };
 
+let supportedCountriesPromise: Promise<void> | null = null;
+
+async function ensureSupportedCountries() {
+  if (!supportedCountriesPromise) {
+    supportedCountriesPromise = prisma
+      .$transaction(
+        supportedCountryRecords.map((country) =>
+          prisma.country.upsert({
+            where: { code: country.code },
+            update: {
+              name: country.name,
+              nativeName: country.nativeName,
+              phoneCode: country.phoneCode,
+              currencyCode: country.currencyCode,
+              defaultShippingFee: country.defaultShippingFee
+            },
+            create: country
+          })
+        )
+      )
+      .then(() => undefined)
+      .catch((error) => {
+        supportedCountriesPromise = null;
+        throw error;
+      });
+  }
+
+  return supportedCountriesPromise;
+}
+
 export async function getResolvedPreferences(userId?: string | null) {
   const cookieStore = await cookies();
   const cookieLocale = cookieStore.get(cookieKeys.localePreference)?.value;
   const cookieCountry = cookieStore.get(cookieKeys.countryPreference)?.value;
+
+  if (cookieCountry === "SD") {
+    await ensureSupportedCountries();
+  }
 
   if (userId) {
     const preference = await prisma.userPreference.findUnique({
@@ -46,10 +99,18 @@ export async function getResolvedPreferences(userId?: string | null) {
     }
   }
 
+  const resolvedCountry =
+    cookieCountry === "SD"
+      ? "SD"
+      : cookieCountry === "EG"
+        ? "EG"
+        : defaultPreference.countryCode;
+
   return {
     ...defaultPreference,
     localeCode: cookieLocale === "en" ? "en" : defaultPreference.localeCode,
-    countryCode: cookieCountry === "SD" ? "SD" : (cookieCountry === "EG" ? "EG" : defaultPreference.countryCode)
+    countryCode: resolvedCountry,
+    currencyCode: resolvedCountry === "SD" ? "SDG" : "EGP"
   } satisfies ResolvedPreference;
 }
 
@@ -73,6 +134,10 @@ export async function writeGuestPreferences(input: PreferenceInput) {
 
 export async function saveUserPreferences(userId: string, input: PreferenceInput) {
   const payload = preferenceSchema.parse(input);
+
+  if (payload.countryCode === "SD") {
+    await ensureSupportedCountries();
+  }
 
   await prisma.userPreference.upsert({
     where: { userId },

@@ -349,6 +349,8 @@ model Address {
   area            String
   detailedAddress String
   notes           String?
+  latitude        Float?
+  longitude       Float?
   isDefault       Boolean     @default(false)
   user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   country         Country     @relation(fields: [countryCode], references: [code], onDelete: Restrict)
@@ -399,6 +401,8 @@ model OrderAddressSnapshot {
   area            String
   detailedAddress String
   notes           String?
+  latitude        Float?
+  longitude       Float?
   order           Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 

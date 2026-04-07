@@ -1,3 +1,6 @@
+"use client";
+
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Reveal } from "@/components/ui/reveal";
@@ -30,7 +33,13 @@ export function NewsletterCta({ locale }: { locale: "ar" | "en" }) {
                 </p>
               </div>
 
-              <form className="grid gap-3 sm:grid-cols-[1fr_auto]">
+              <form 
+                className="grid gap-3 sm:grid-cols-[1fr_auto]"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  toast.success(locale === "ar" ? "تم الاشتراك بنجاح" : "Subscribed successfully");
+                }}
+              >
                 <Input
                   type="email"
                   placeholder={locale === "ar" ? "name@email.com" : "name@email.com"}

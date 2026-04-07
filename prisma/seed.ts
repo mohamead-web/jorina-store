@@ -825,6 +825,25 @@ async function upsertCountries() {
       defaultShippingFee: 50
     }
   });
+
+  await prisma.country.upsert({
+    where: { code: CountryCode.SD },
+    update: {
+      name: "Sudan",
+      nativeName: "السودان",
+      phoneCode: "+249",
+      currencyCode: "SDG",
+      defaultShippingFee: 0
+    },
+    create: {
+      code: CountryCode.SD,
+      name: "Sudan",
+      nativeName: "السودان",
+      phoneCode: "+249",
+      currencyCode: "SDG",
+      defaultShippingFee: 0
+    }
+  });
 }
 
 async function upsertCategories() {

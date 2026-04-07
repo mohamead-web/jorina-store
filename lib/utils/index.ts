@@ -7,16 +7,30 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+const EXCHANGE_RATES: Record<string, number> = {
+  EGP: 1,
+  SDG: 55 // Assuming base price in DB is EGP. 1 EGP ≈ 55 SDG. Adjust as needed.
+};
+
 export function formatCurrency(value: number, locale: string, currency = "EGP") {
-  return new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-EG", {
+  // Map currencies to specific locales for better formatting
+  const currencyLocales: Record<string, string> = {
+    EGP: locale === "ar" ? "ar-EG" : "en-EG",
+    SDG: locale === "ar" ? "ar-SD" : "en-SD"
+  };
+
+  const targetLocale = currencyLocales[currency] || (locale === "ar" ? "ar-EG" : "en-US");
+  const convertedValue = value * (EXCHANGE_RATES[currency] || 1);
+
+  return new Intl.NumberFormat(targetLocale, {
     style: "currency",
     currency,
-    maximumFractionDigits: 2
-  }).format(value);
+    maximumFractionDigits: currency === "SDG" ? 0 : 2
+  }).format(convertedValue);
 }
 
 export function formatDate(value: Date | string, locale: string) {
-  return new Intl.DateTimeFormat(locale === "ar" ? "ar-SA" : "en-US", {
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar-EG" : "en-US", {
     day: "numeric",
     month: "long",
     year: "numeric"

@@ -42,7 +42,8 @@ export default async function OrdersPage({
                 status: order.status,
                 total: Number(order.total),
                 createdAt: order.createdAt,
-                itemCount: order.items.length
+                itemCount: order.items.length,
+                currencyCode: order.countryCode === "SD" ? "SDG" : "EGP"
               }}
             />
           ))}

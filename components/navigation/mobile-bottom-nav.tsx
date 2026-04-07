@@ -52,7 +52,7 @@ export function MobileBottomNav({
       <nav className="mx-auto flex max-w-sm justify-between gap-1 rounded-[2rem] border border-white/60 bg-white/70 px-4 py-2.5 shadow-[0_16px_40px_-12px_rgba(17,17,17,0.16)] backdrop-blur-2xl">
         {items.map((item) => {
           const Icon = item.icon;
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active = item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
             <Link

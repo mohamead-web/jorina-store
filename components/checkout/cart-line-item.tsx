@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { QuantitySelector } from "@/components/ui/quantity-selector";
 import { formatCurrency } from "@/lib/utils";
+import { usePreferences } from "@/components/layout/providers";
 
 export function CartLineItem({
   locale,
@@ -29,7 +30,15 @@ export function CartLineItem({
   };
 }) {
   const router = useRouter();
+  const { currencyCode } = usePreferences();
   const [quantity, setQuantity] = useState(item.quantity);
+
+  // Sync state if it changes from the server (e.g. after refresh or failure)
+  import("react").then(({ useEffect }) => {
+     useEffect(() => {
+        setQuantity(item.quantity);
+     }, [item.quantity]);
+  });
 
   return (
     <div className="premium-card flex flex-col gap-4 p-4 min-[390px]:flex-row">
@@ -49,7 +58,7 @@ export function CartLineItem({
             <p className="mt-1 text-sm text-text-soft">{item.shadeName}</p>
           ) : null}
           <p className="mt-2 text-sm font-medium text-text">
-            {formatCurrency(item.lineTotal, locale)}
+            {formatCurrency(item.lineTotal, locale, currencyCode)}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">

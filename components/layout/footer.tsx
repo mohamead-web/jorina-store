@@ -2,6 +2,8 @@
 
 import { useTranslations } from "next-intl";
 
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { footerNavigation, siteConfig } from "@/lib/constants/site";
@@ -19,7 +21,13 @@ export function Footer() {
             <p className="max-w-xl text-sm leading-7 text-text-soft">
               {t("footer.newsletterBody")}
             </p>
-            <form className="flex flex-col gap-3 sm:flex-row">
+            <form 
+              className="flex flex-col gap-3 sm:flex-row"
+              onSubmit={(e) => {
+                e.preventDefault();
+                toast.success("Subscribed successfully");
+              }}
+            >
               <Input type="email" placeholder="name@email.com" className="sm:max-w-sm" />
               <Button type="submit" variant="blush">
                 {t("common.save")}
@@ -40,7 +48,7 @@ export function Footer() {
 
           <div>
             <h4 className="mb-4 text-sm font-medium text-text">
-              {t("navigation.privacyPolicy")}
+              {t("footer.policies")}
             </h4>
             <div className="space-y-3 text-sm text-text-soft">
               {footerNavigation.policy.map((item) => (

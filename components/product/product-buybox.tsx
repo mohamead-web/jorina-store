@@ -12,6 +12,7 @@ import { toggleWishlistAction } from "@/lib/actions/wishlist-actions";
 import { Button } from "@/components/ui/button";
 import { QuantitySelector } from "@/components/ui/quantity-selector";
 import { formatCurrency } from "@/lib/utils";
+import { usePreferences } from "@/components/layout/providers";
 
 export function ProductBuyBox({
   locale,
@@ -40,12 +41,14 @@ export function ProductBuyBox({
   const t = useTranslations("product");
   const router = useRouter();
   const { status } = useSession();
+  const { currencyCode } = usePreferences();
   const [selectedVariantId, setSelectedVariantId] = useState<string | null>(
     product.variants[0]?.id ?? null
   );
   const [quantity, setQuantity] = useState(1);
   const [favorite, setFavorite] = useState(isFavorite);
-  const [isPending, setIsPending] = useState(false);
+  const [isCartPending, setIsCartPending] = useState(false);
+  const [isWishlistPending, setIsWishlistPending] = useState(false);
 
   const selectedVariant =
     product.variants.find((variant) => variant.id === selectedVariantId) ?? null;
@@ -53,7 +56,7 @@ export function ProductBuyBox({
   const isOutOfStock = Boolean(selectedVariant) && (selectedVariant?.stockQty ?? 0) <= 0;
 
   const handleAddToCart = () => {
-    setIsPending(true);
+    setIsCartPending(true);
     startTransition(async () => {
       await addToCartAction({
         localeCode: locale,
@@ -61,7 +64,7 @@ export function ProductBuyBox({
         variantId: selectedVariantId,
         quantity
       });
-      setIsPending(false);
+      setIsCartPending(false);
       router.refresh();
       toast.success(locale === "ar" ? "تمت الإضافة إلى السلة" : "Added to cart");
     });
@@ -75,14 +78,14 @@ export function ProductBuyBox({
       return;
     }
 
-    setIsPending(true);
+    setIsWishlistPending(true);
     startTransition(async () => {
       const result = await toggleWishlistAction({
         localeCode: locale,
         productId: product.id
       });
       setFavorite(Boolean(result.saved));
-      setIsPending(false);
+      setIsWishlistPending(false);
       router.refresh();
       toast.success(
         result.saved
@@ -111,11 +114,11 @@ export function ProductBuyBox({
 
           <div className="flex items-center gap-3">
             <span className="text-lg font-semibold text-text">
-              {formatCurrency(currentPrice, locale)}
+              {formatCurrency(currentPrice, locale, currencyCode)}
             </span>
             {product.compareAtPrice ? (
               <span className="text-sm text-text-muted line-through">
-                {formatCurrency(product.compareAtPrice, locale)}
+                {formatCurrency(product.compareAtPrice, locale, currencyCode)}
               </span>
             ) : null}
           </div>
@@ -165,7 +168,7 @@ export function ProductBuyBox({
               type="button"
               className="flex-1"
               size="lg"
-              disabled={isPending || isOutOfStock}
+              disabled={isCartPending || isOutOfStock}
               onClick={handleAddToCart}
             >
               <ShoppingBag className="h-4 w-4" />
@@ -176,7 +179,7 @@ export function ProductBuyBox({
               variant="secondary"
               size="lg"
               className="h-12 w-12 rounded-full p-0"
-              disabled={isPending}
+              disabled={isWishlistPending}
               onClick={handleToggleWishlist}
             >
               <Heart className={`h-5 w-5 ${favorite ? "fill-current" : ""}`} />
@@ -188,8 +191,8 @@ export function ProductBuyBox({
               <h3 className="font-medium text-text">{t("delivery")}</h3>
               <p>
                 {locale === "ar"
-                  ? "شحن داخل مصر مع رسوم محددة حسب المحافظة، والدفع عند الاستلام."
-                  : "Shipping inside Saudi Arabia with a placeholder flat fee and manual confirmation for cash on delivery."}
+                  ? "الشحن داخل مصر برسوم حسب المحافظة، مع توصيل مجاني داخل السودان والدفع عند الاستلام."
+                  : "Shipping across Egypt with governorate-based fees, plus free delivery across Sudan. Cash on delivery is available."}
               </p>
             </div>
             <div>
@@ -214,7 +217,7 @@ export function ProductBuyBox({
         <div className="mx-auto flex max-w-7xl items-center gap-3">
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold text-text">
-              {formatCurrency(currentPrice, locale)}
+              {formatCurrency(currentPrice, locale, currencyCode)}
             </p>
             <p className="truncate text-[11px] text-text-soft">
               {selectedVariant?.shadeName
@@ -228,7 +231,7 @@ export function ProductBuyBox({
             type="button"
             variant="secondary"
             className="h-14 w-14 shrink-0 rounded-full p-0"
-            disabled={isPending}
+            disabled={isWishlistPending}
             onClick={handleToggleWishlist}
           >
             <Heart className={`h-5 w-5 ${favorite ? "fill-current" : ""}`} />
@@ -237,7 +240,7 @@ export function ProductBuyBox({
             type="button"
             size="lg"
             className="h-14 min-w-[10.5rem] shrink-0 rounded-[1.1rem] text-base"
-            disabled={isPending || isOutOfStock}
+            disabled={isCartPending || isOutOfStock}
             onClick={handleAddToCart}
           >
             <ShoppingBag className="h-4 w-4" />

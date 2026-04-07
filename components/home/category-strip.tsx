@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Link } from "@/lib/i18n/navigation";
@@ -92,7 +93,7 @@ export function CategoryStrip({
                   className="group relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between border-b border-black/10 py-12 px-6 sm:px-10 transition-all duration-700 hover:border-transparent"
                 >
                   <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-[#fbf9f8]">
-                    <img src={theme.bgImage} alt="" className="w-full h-full object-cover opacity-35 mix-blend-multiply" />
+                    <Image src={theme.bgImage} alt="" fill sizes="100vw" className="object-cover opacity-35 mix-blend-multiply" />
                   </div>
                   
                   <div className="relative z-10 flex items-center gap-6 sm:gap-16 w-full md:w-auto">

@@ -14,7 +14,7 @@ import {
   removeCartItem,
   updateCartItemQuantity
 } from "@/lib/services/cart";
-import { mergeGuestPreferencesIntoUser } from "@/lib/services/preferences";
+import { getResolvedPreferences, mergeGuestPreferencesIntoUser } from "@/lib/services/preferences";
 
 async function resolveCartOwner() {
   const user = await getCurrentUser();
@@ -46,11 +46,12 @@ export async function addToCartAction(input: {
 }) {
   try {
     const { userId, guestToken } = await resolveCartOwner();
+    const prefs = await getResolvedPreferences(userId);
     await addCartItem({
       userId,
       guestToken,
       localeCode: input.localeCode,
-      countryCode: "EG",
+      countryCode: prefs.countryCode,
       productId: input.productId,
       variantId: input.variantId,
       quantity: input.quantity ?? 1

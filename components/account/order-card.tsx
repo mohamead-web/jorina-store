@@ -13,6 +13,7 @@ export function OrderCard({
     total: number;
     createdAt: Date;
     itemCount: number;
+    currencyCode: "EGP" | "SDG";
   };
 }) {
   return (
@@ -33,7 +34,7 @@ export function OrderCard({
         <p>
           {order.itemCount} {locale === "ar" ? "منتج" : "items"}
         </p>
-        <p>{formatCurrency(order.total, locale)}</p>
+        <p>{formatCurrency(order.total, locale, order.currencyCode)}</p>
       </div>
       <Link
         href={`/account/orders/${order.orderNumber}`}

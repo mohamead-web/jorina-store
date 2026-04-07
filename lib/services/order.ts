@@ -1,3 +1,4 @@
+import { getShippingFeeForLocation } from "@/lib/constants/commerce";
 import { prisma } from "@/lib/db/prisma";
 import { returnWindowDays } from "@/lib/constants/commerce";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators/checkout";
@@ -38,11 +39,15 @@ export async function createOrderFromCart({
     throw new Error("Cart is empty");
   }
 
-  const country = await prisma.country.findUnique({
-    where: { code: payload.countryCode }
-  });
+  for (const item of cart.items) {
+    const availableStock = item.variant ? item.variant.stockQty : item.product.totalStock;
 
-  const shippingFee = country ? Number(country.defaultShippingFee) : 25;
+    if (availableStock < item.quantity) {
+      throw new Error("Insufficient stock for one or more items");
+    }
+  }
+
+  const shippingFee = getShippingFeeForLocation(payload.countryCode, payload.city);
   const subtotal = cart.items.reduce(
     (sum, item) => sum + Number(item.currentUnitPrice) * item.quantity,
     0
@@ -74,6 +79,8 @@ export async function createOrderFromCart({
             city: payload.city,
             area: payload.area,
             detailedAddress: payload.detailedAddress,
+            latitude: payload.latitude,
+            longitude: payload.longitude,
             notes: payload.notes || null
           }
         },

@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useReducedMotion } from "framer-motion";
 import Lenis from "lenis";
 
-export function SmoothScrollProvider({
-  children
-}: {
-  children: React.ReactNode;
-}) {
+function SmoothScrollLogic() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion();
@@ -87,5 +83,20 @@ export function SmoothScrollProvider({
     lenisRef.current?.resize();
   }, [enabled, pathname, searchKey]);
 
-  return <>{children}</>;
+  return null;
+}
+
+export function SmoothScrollProvider({
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <Suspense fallback={null}>
+        <SmoothScrollLogic />
+      </Suspense>
+      {children}
+    </>
+  );
 }

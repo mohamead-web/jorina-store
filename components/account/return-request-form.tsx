@@ -27,17 +27,21 @@ export function ReturnRequestForm({
         const formData = new FormData(event.currentTarget);
 
         startTransition(async () => {
-          await requestReturnAction(locale, {
-            orderId,
-            orderItemId,
-            reason: String(formData.get("reason") ?? ""),
-            notes: String(formData.get("notes") ?? "")
-          });
-          router.refresh();
-          toast.success(
-            locale === "ar" ? "تم إرسال طلب الإرجاع" : "Return request submitted"
-          );
-          event.currentTarget.reset();
+          try {
+            await requestReturnAction(locale, {
+              orderId,
+              orderItemId,
+              reason: String(formData.get("reason") ?? ""),
+              notes: String(formData.get("notes") ?? "")
+            });
+            router.refresh();
+            toast.success(
+              locale === "ar" ? "تم إرسال طلب الإرجاع" : "Return request submitted"
+            );
+            event.currentTarget.reset();
+          } catch (error) {
+            toast.error(locale === "ar" ? "تعذر إرسال طلب الإرجاع" : "Failed to submit return request");
+          }
         });
       }}
     >

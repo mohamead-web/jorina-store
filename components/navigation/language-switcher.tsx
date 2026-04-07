@@ -5,8 +5,15 @@ import { startTransition } from "react";
 
 import { updatePreferencesAction } from "@/lib/actions/preference-actions";
 import { usePathname, useRouter } from "@/lib/i18n/navigation";
+import { type AppCountry } from "@/types/domain";
 
-export function LanguageSwitcher({ locale }: { locale: "ar" | "en" }) {
+export function LanguageSwitcher({
+  locale,
+  countryCode
+}: {
+  locale: "ar" | "en";
+  countryCode: AppCountry;
+}) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -18,10 +25,10 @@ export function LanguageSwitcher({ locale }: { locale: "ar" | "en" }) {
         className="bg-transparent text-[16px] text-text sm:text-sm"
         onChange={(event) => {
           const nextLocale = event.target.value as "ar" | "en";
-          startTransition(() => {
-            void updatePreferencesAction({
+          startTransition(async () => {
+            await updatePreferencesAction({
               localeCode: nextLocale,
-              countryCode: "EG"
+              countryCode
             });
             router.replace(pathname, { locale: nextLocale });
           });

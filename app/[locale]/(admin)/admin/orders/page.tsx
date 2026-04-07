@@ -95,7 +95,7 @@ export default async function AdminOrdersPage({
                     </div>
                   </td>
                   <td className="px-5 py-4 text-sm text-white/80">
-                    {formatCurrency(Number(order.total), locale)}
+                    {formatCurrency(Number(order.total), locale, order.countryCode === "SD" ? "SDG" : "EGP")}
                   </td>
                   <td className="px-5 py-4 text-sm text-white/50">
                     {order.items.length}

@@ -22,8 +22,8 @@ export default async function ShippingDeliveryPage({
           <Reveal delay={0.05}>
             <p>
               {ar
-                ? "نوفر خدمة التوصيل لجميع محافظات مصر. القاهرة والجيزة: 50 ج.م، الإسكندرية: 60 ج.م، باقي المحافظات: 80 ج.م. الدفع عند الاستلام."
-                : "We deliver across all Egyptian governorates. Cairo & Giza: 50 EGP, Alexandria: 60 EGP, other governorates: 80 EGP. Cash on delivery."}
+                ? "نوفر خدمة التوصيل لجميع محافظات مصر. القاهرة والجيزة: 50 ج.م، الإسكندرية: 60 ج.م، باقي المحافظات: 80 ج.م. كما نوفر خدمة التوصيل مجاناً لجميع مناطق السودان. الدفع عند الاستلام."
+                : "We deliver across all Egyptian governorates. Cairo & Giza: 50 EGP, Alexandria: 60 EGP, other governorates: 80 EGP. We also offer free delivery across Sudan. Cash on delivery."}
             </p>
           </Reveal>
           <Reveal delay={0.1}>

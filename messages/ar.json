@@ -33,7 +33,7 @@
     "cashOnDelivery": "الدفع عند الاستلام"
   },
   "announcement": {
-    "text": "شحن داخل السعودية ورسوم ثابتة مبدئية 25 ر.س"
+    "text": "التوصيل داخل مصر والسودان مع الدفع عند الاستلام"
   },
   "product": {
     "addToCart": "أضيفي إلى السلة",
@@ -105,6 +105,20 @@
   "footer": {
     "newsletterTitle": "ابقِي على اطلاع بإصدارات JORINA",
     "newsletterBody": "سجلي بريدك لاستقبال الإصدارات الجديدة والعروض المختارة.",
+    "policies": "السياسات والشروط",
     "copyright": "جميع الحقوق محفوظة لـ JORINA"
+  },
+  "location": {
+    "addNewAddress": "إضافة عنوان جديد",
+    "searchPlaceholder": "ابحث عن عنوانك الوطني، مبنى...",
+    "useCurrentLocation": "استخدم موقعي الحالي",
+    "deliveryPin": "سيتم توصيل طلبك هنا",
+    "currentLocation": "الموقع الحالي",
+    "confirmLocation": "تأكيد الموقع",
+    "changeLocation": "تغيير الموقع",
+    "locationSelected": "تم تحديد الموقع",
+    "loadingAddress": "جارٍ تحديد العنوان...",
+    "pinLocation": "حدد موقعك على الخريطة",
+    "mapError": "تعذر تحميل الخريطة"
   }
 }

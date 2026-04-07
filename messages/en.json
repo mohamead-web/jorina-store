@@ -33,7 +33,7 @@
     "cashOnDelivery": "Cash on delivery"
   },
   "announcement": {
-    "text": "Shipping across Saudi Arabia with a placeholder flat fee of SAR 25"
+    "text": "Delivery across Egypt and Sudan with cash on delivery"
   },
   "product": {
     "addToCart": "Add to cart",
@@ -105,6 +105,20 @@
   "footer": {
     "newsletterTitle": "Stay close to new JORINA releases",
     "newsletterBody": "Subscribe to receive product launches and selected offers.",
+    "policies": "Policies",
     "copyright": "All rights reserved to JORINA"
+  },
+  "location": {
+    "addNewAddress": "Add new address",
+    "searchPlaceholder": "Search for your national address, building...",
+    "useCurrentLocation": "Use current location",
+    "deliveryPin": "Your order will be delivered here",
+    "currentLocation": "CURRENT LOCATION",
+    "confirmLocation": "CONFIRM LOCATION",
+    "changeLocation": "Change location",
+    "locationSelected": "Location selected",
+    "loadingAddress": "Detecting address...",
+    "pinLocation": "Pin your location on the map",
+    "mapError": "Failed to load map"
   }
 }

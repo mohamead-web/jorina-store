@@ -33,6 +33,14 @@ type CartWithRelations = Prisma.CartGetPayload<{
   include: typeof cartInclude;
 }>;
 
+type ProductStockSnapshot = {
+  totalStock: number;
+};
+
+type VariantStockSnapshot = {
+  stockQty: number;
+} | null | undefined;
+
 export type CartState = {
   id: string | null;
   items: Array<{
@@ -65,6 +73,10 @@ function getPrimaryImage(
   return [...items].sort(
     (a, b) => Number(b.isPrimary) - Number(a.isPrimary) || a.sortOrder - b.sortOrder
   )[0];
+}
+
+function getAvailableStock(product: ProductStockSnapshot, variant: VariantStockSnapshot) {
+  return variant ? variant.stockQty : product.totalStock;
 }
 
 function mapCart(cart: CartWithRelations | null, locale: AppLocale): CartState {
@@ -143,7 +155,17 @@ export async function ensureCart({
   });
 
   if (existing) {
-    return existing;
+    if (existing.localeCode === localeCode && existing.countryCode === countryCode) {
+      return existing;
+    }
+
+    return prisma.cart.update({
+      where: { id: existing.id },
+      data: {
+        localeCode,
+        countryCode
+      }
+    });
   }
 
   return prisma.cart.create({
@@ -185,10 +207,20 @@ export async function addCartItem({
     throw new Error("Product not found");
   }
 
+  if (!Number.isInteger(quantity) || quantity <= 0) {
+    throw new Error("Quantity must be a positive integer");
+  }
+
   const variant = variantId
     ? product.variants.find((entry) => entry.id === variantId)
     : null;
+
+  if (variantId && !variant) {
+    throw new Error("Variant not found");
+  }
+
   const unitPrice = Number(variant?.priceOverride ?? product.basePrice);
+  const availableStock = getAvailableStock(product, variant);
 
   const existingItem = await prisma.cartItem.findFirst({
     where: {
@@ -197,6 +229,16 @@ export async function addCartItem({
       variantId: variantId ?? null
     }
   });
+
+  const nextQuantity = (existingItem?.quantity ?? 0) + quantity;
+
+  if (availableStock <= 0) {
+    throw new Error("Product is out of stock");
+  }
+
+  if (nextQuantity > availableStock) {
+    throw new Error("Requested quantity exceeds available stock");
+  }
 
   if (existingItem) {
     await prisma.cartItem.update({
@@ -301,17 +343,10 @@ export async function clearCart({
 }
 
 export async function mergeGuestCartIntoUser(userId: string, guestToken: string) {
-  const [guestCart, userCart] = await Promise.all([
-    prisma.cart.findFirst({
-      where: { guestToken },
-      include: { items: true }
-    }),
-    ensureCart({
-      userId,
-      localeCode: "ar",
-      countryCode: "EG"
-    })
-  ]);
+  const guestCart = await prisma.cart.findFirst({
+    where: { guestToken },
+    include: { items: true }
+  });
 
   if (!guestCart || guestCart.items.length === 0) {
     if (guestCart) {
@@ -319,6 +354,12 @@ export async function mergeGuestCartIntoUser(userId: string, guestToken: string)
     }
     return;
   }
+
+  const userCart = await ensureCart({
+    userId,
+    localeCode: guestCart.localeCode === "en" ? "en" : "ar",
+    countryCode: guestCart.countryCode === "SD" ? "SD" : "EG"
+  });
 
   const existingItems = await prisma.cartItem.findMany({
     where: { cartId: userCart.id }

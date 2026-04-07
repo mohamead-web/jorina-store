@@ -22,6 +22,7 @@ export default async function OrderDetailsPage({
   }
 
   const returnable = canRequestReturn(order);
+  const orderCurrency = order.countryCode === "SD" ? "SDG" : "EGP";
   const returnedItemIds = new Set(
     order.returnRequests.flatMap((request) => request.items.map((item) => item.orderItemId))
   );
@@ -38,7 +39,7 @@ export default async function OrderDetailsPage({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <StatusPill status={order.status} />
           <p className="text-sm text-text-soft">
-            {formatCurrency(Number(order.total), typedLocale)}
+            {formatCurrency(Number(order.total), typedLocale, orderCurrency)}
           </p>
         </div>
         <div className="mt-6 space-y-4">
@@ -51,11 +52,11 @@ export default async function OrderDetailsPage({
                     {item.variantName ?? (typedLocale === "ar" ? "بدون درجة" : "No variant")}
                   </p>
                   <p className="mt-2 text-sm text-text-soft">
-                    {item.quantity} × {formatCurrency(Number(item.unitPrice), typedLocale)}
+                    {item.quantity} × {formatCurrency(Number(item.unitPrice), typedLocale, orderCurrency)}
                   </p>
                 </div>
                 <p className="text-sm font-semibold text-text">
-                  {formatCurrency(Number(item.totalPrice), typedLocale)}
+                  {formatCurrency(Number(item.totalPrice), typedLocale, orderCurrency)}
                 </p>
               </div>
               {returnable && !returnedItemIds.has(item.id) ? (

@@ -9,6 +9,8 @@ export const checkoutSchema = z.object({
   area: z.string().min(2).max(80),
   detailedAddress: z.string().min(6).max(220),
   notes: z.string().max(240).optional().or(z.literal("")),
+  latitude: z.number(),
+  longitude: z.number(),
   localeCode: z.enum(["ar", "en"]).default("ar")
 });
 

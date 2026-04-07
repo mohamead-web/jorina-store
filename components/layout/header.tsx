@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { accountNavigation, mainNavigation } from "@/lib/constants/site";
 import { Link, usePathname } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { type AppCountry } from "@/types/domain";
 import { CountrySwitcher } from "@/components/navigation/country-switcher";
 import { LanguageSwitcher } from "@/components/navigation/language-switcher";
 import { Logo } from "@/components/layout/logo";
@@ -17,7 +18,7 @@ type HeaderProps = {
   locale: "ar" | "en";
   cartCount: number;
   wishlistCount: number;
-  countryCode: "EG" | "SD";
+  countryCode: AppCountry;
   isAuthenticated: boolean;
 };
 
@@ -84,7 +85,7 @@ export function Header({
 
             <div className="hidden items-center gap-3 lg:flex">
               <CountrySwitcher locale={locale} countryCode={countryCode} />
-              <LanguageSwitcher locale={locale} />
+              <LanguageSwitcher locale={locale} countryCode={countryCode} />
             </div>
 
             <div className="flex items-center gap-2">
@@ -207,7 +208,7 @@ export function Header({
 
           <div className="mt-6 flex flex-col gap-3">
             <CountrySwitcher locale={locale} countryCode={countryCode} />
-            <LanguageSwitcher locale={locale} />
+            <LanguageSwitcher locale={locale} countryCode={countryCode} />
           </div>
 
           {isAuthenticated ? (

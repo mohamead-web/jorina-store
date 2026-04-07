@@ -90,6 +90,7 @@ export default async function LocaleLayout({
       locale={typedLocale}
       messages={messages}
       session={session}
+      preferences={preferences}
     >
       <div
         dir={typedLocale === "ar" ? "rtl" : "ltr"}

@@ -19,8 +19,19 @@ export async function saveAddress(userId: string, input: AddressInput) {
   }
 
   if (payload.addressId) {
+    const existing = await prisma.address.findFirst({
+      where: {
+        id: payload.addressId,
+        userId
+      }
+    });
+
+    if (!existing) {
+      throw new Error("Address not found");
+    }
+
     return prisma.address.update({
-      where: { id: payload.addressId },
+      where: { id: existing.id },
       data: {
         label: payload.label,
         type: payload.type,
@@ -30,6 +41,8 @@ export async function saveAddress(userId: string, input: AddressInput) {
         city: payload.city,
         area: payload.area,
         detailedAddress: payload.detailedAddress,
+        latitude: payload.latitude,
+        longitude: payload.longitude,
         notes: payload.notes || null,
         isDefault: payload.isDefault
       }
@@ -47,6 +60,8 @@ export async function saveAddress(userId: string, input: AddressInput) {
       city: payload.city,
       area: payload.area,
       detailedAddress: payload.detailedAddress,
+      latitude: payload.latitude,
+      longitude: payload.longitude,
       notes: payload.notes || null,
       isDefault: payload.isDefault
     }

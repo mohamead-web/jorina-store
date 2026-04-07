@@ -2,7 +2,10 @@ export const siteConfig = {
   name: "JORINA",
   description:
     "Luxury cosmetics brand experience with an Arabic-first, editorial commerce journey.",
-  url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+  url:
+    process.env.NEXT_PUBLIC_APP_URL ||
+    process.env.NEXTAUTH_URL ||
+    "https://www.jorina.shop",
   defaultLocale: "ar",
   defaultCountry: "EG",
   contactEmail: "hello@jorina.com",

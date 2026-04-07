@@ -83,7 +83,8 @@ export default async function AccountOverviewPage({
                 status: order.status,
                 total: Number(order.total),
                 createdAt: order.createdAt,
-                itemCount: order.items.length
+                itemCount: order.items.length,
+                currencyCode: order.countryCode === "SD" ? "SDG" : "EGP"
               }}
             />
           ))}

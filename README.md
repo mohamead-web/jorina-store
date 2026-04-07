@@ -40,16 +40,19 @@ Copy `.env.example` to `.env` and fill in the values you need:
 ```env
 DATABASE_URL="postgresql://jorina:jorina@localhost:5433/jorina?schema=public"
 NEXTAUTH_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 NEXTAUTH_SECRET="change-me"
 GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
 DEFAULT_LOCALE="ar"
-DEFAULT_COUNTRY="SA"
+DEFAULT_COUNTRY="EG"
+ADMIN_EMAILS="admin@example.com"
 ```
 
 Notes:
 - Google login stays safely inactive until `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are provided.
 - Cash on delivery works without any payment gateway setup.
+- In production on Vercel, set `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL` to your live domain.
 
 ## Local Run
 
@@ -140,4 +143,3 @@ npm run start
 - The included product and category data are realistic mock seed entries for development.
 - The current logo asset is loaded from the provided JORINA brand logo and stored under `public/brand/jorina-logo.jpeg`.
 - Docker PostgreSQL in this project uses host port `5433` to avoid conflicts with any local PostgreSQL service already using `5432`.
-Fresh start

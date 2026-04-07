@@ -3,23 +3,31 @@
 import Image from "next/image";
 import { motion, type MotionStyle } from "framer-motion";
 
+import { cn } from "@/lib/utils";
+
 export function OpeningSequence({
-  locale,
   style,
-  mode = "overlay"
+  mode = "overlay",
+  className,
+  imageClassName,
+  overlayClassName,
+  wordmarkClassName
 }: {
-  locale: "ar" | "en";
   style?: MotionStyle;
-  mode?: "overlay" | "static";
+  mode?: "overlay" | "panel";
+  className?: string;
+  imageClassName?: string;
+  overlayClassName?: string;
+  wordmarkClassName?: string;
 }) {
   return (
     <motion.div
       style={style}
-      className={
-        mode === "overlay"
-          ? "pointer-events-none absolute inset-0 z-0"
-          : "pointer-events-none absolute inset-0"
-      }
+      className={cn(
+        "pointer-events-none absolute inset-0",
+        mode === "overlay" ? "z-0" : "",
+        className
+      )}
     >
       <Image
         src="/assets/hero/ai-luxury-bg-v7.png"
@@ -27,15 +35,25 @@ export function OpeningSequence({
         fill
         sizes="100vw"
         priority
-        quality={100}
-        className="object-cover object-center"
+        quality={90}
+        className={cn("object-cover object-center", imageClassName)}
       />
       
       {/* Soft warm shadow for legibility without harsh black */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#2a1a14]/60 via-[#2a1a14]/10 to-transparent mix-blend-multiply" />
+      <div
+        className={cn(
+          "absolute inset-0 bg-gradient-to-t from-[#2a1a14]/60 via-[#2a1a14]/10 to-transparent mix-blend-multiply",
+          overlayClassName
+        )}
+      />
       
       {/* Top logo mark */}
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 text-white/90 text-[10px] uppercase tracking-[0.4em] font-medium z-10">
+      <div
+        className={cn(
+          "absolute left-1/2 top-8 z-10 -translate-x-1/2 text-[10px] font-medium uppercase tracking-[0.4em] text-white/90",
+          wordmarkClassName
+        )}
+      >
         Jorina
       </div>
     </motion.div>

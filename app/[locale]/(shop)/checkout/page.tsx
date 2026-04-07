@@ -2,6 +2,7 @@ import { CheckoutWizard } from "@/components/checkout/checkout-wizard";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCartByIdentity, getGuestCartToken } from "@/lib/services/cart";
+import { getResolvedPreferences } from "@/lib/services/preferences";
 
 export default async function CheckoutPage({
   params
@@ -12,6 +13,7 @@ export default async function CheckoutPage({
   const typedLocale = locale as "ar" | "en";
   const user = await getCurrentUser();
   const guestToken = await getGuestCartToken();
+  const preferences = await getResolvedPreferences(user?.id);
   const cart = await getCartByIdentity({
     userId: user?.id,
     guestToken: user?.id ? null : guestToken,
@@ -43,7 +45,12 @@ export default async function CheckoutPage({
         <CheckoutWizard
           locale={typedLocale}
           subtotal={cart.subtotal}
-          defaults={{ email: user?.email ?? "" }}
+          countryCode={preferences.countryCode}
+          currencyCode={preferences.currencyCode}
+          defaults={{
+            email: user?.email ?? "",
+            countryCode: preferences.countryCode
+          }}
         />
       </div>
     </div>

@@ -2,9 +2,11 @@ import { CartLineItem } from "@/components/checkout/cart-line-item";
 import { OrderSummary } from "@/components/checkout/order-summary";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Button } from "@/components/ui/button";
+import { getShippingFeeForLocation } from "@/lib/constants/commerce";
 import { Link } from "@/lib/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getCartByIdentity, getGuestCartToken } from "@/lib/services/cart";
+import { getResolvedPreferences } from "@/lib/services/preferences";
 import { formatCurrency } from "@/lib/utils";
 
 export default async function CartPage({
@@ -16,11 +18,13 @@ export default async function CartPage({
   const typedLocale = locale as "ar" | "en";
   const user = await getCurrentUser();
   const guestToken = await getGuestCartToken();
+  const preferences = await getResolvedPreferences(user?.id);
   const cart = await getCartByIdentity({
     userId: user?.id,
     guestToken: user?.id ? null : guestToken,
     locale: typedLocale
   });
+  const shippingFee = getShippingFeeForLocation(preferences.countryCode);
 
   if (cart.items.length === 0) {
     return (
@@ -50,7 +54,12 @@ export default async function CartPage({
           ))}
         </div>
         <div className="hidden space-y-4 lg:block">
-          <OrderSummary locale={typedLocale} subtotal={cart.subtotal} shippingFee={25} />
+          <OrderSummary
+            locale={typedLocale}
+            subtotal={cart.subtotal}
+            shippingFee={shippingFee}
+            currency={preferences.currencyCode}
+          />
           <Button asChild size="lg" className="w-full">
             <Link href="/checkout">
               {typedLocale === "ar" ? "إتمام الطلب" : "Proceed to checkout"}
@@ -72,7 +81,11 @@ export default async function CartPage({
               {typedLocale === "ar" ? "إجمالي الطلب" : "Order total"}
             </p>
             <p className="mt-1 text-sm font-semibold text-text">
-              {formatCurrency(cart.subtotal + 25, typedLocale)}
+              {formatCurrency(
+                cart.subtotal + shippingFee,
+                typedLocale,
+                preferences.currencyCode
+              )}
             </p>
           </div>
           <Button asChild size="lg" className="h-12 min-w-[10rem]">

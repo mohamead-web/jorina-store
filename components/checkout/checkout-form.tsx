@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { startTransition, useState } from "react";
+import { startTransition, useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -10,27 +10,39 @@ import { placeOrderAction } from "@/lib/actions/checkout-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { type ShippingCityCode } from "@/lib/constants/commerce";
 import {
   checkoutSchema,
   type CheckoutFormValues
 } from "@/lib/validators/checkout";
+import { LocationPicker } from "@/components/ui/location-picker";
 
 export function CheckoutForm({
   locale,
   defaults,
   formId = "checkout-form",
   showSubmit = true,
-  onCityChange
+  onCityChange,
+  onSubmittingChange
 }: {
   locale: "ar" | "en";
   defaults?: Partial<CheckoutFormValues>;
   formId?: string;
   showSubmit?: boolean;
-  onCityChange?: (cityCode: "cairo" | "giza" | "alexandria" | "other") => void;
+  onCityChange?: (cityCode: ShippingCityCode) => void;
+  onSubmittingChange?: (isSubmitting: boolean) => void;
 }) {
   const router = useRouter();
   const initialCallingCode = defaults?.countryCode === "SD" ? "+249" : "+20";
   const [callingCode, setCallingCode] = useState(initialCallingCode);
+  const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    if (onSubmittingChange) {
+      onSubmittingChange(isPending);
+    }
+  }, [isPending, onSubmittingChange]);
+
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
@@ -42,7 +54,9 @@ export function CheckoutForm({
       area: defaults?.area ?? "",
       detailedAddress: defaults?.detailedAddress ?? "",
       notes: defaults?.notes ?? "",
-      localeCode: locale
+      localeCode: locale,
+      latitude: defaults?.latitude ?? undefined,
+      longitude: defaults?.longitude ?? undefined
     }
   });
 
@@ -110,6 +124,7 @@ export function CheckoutForm({
             {...form.register("city")}
             onChange={(e) => {
               form.setValue("city", e.target.value);
+              onCityChange?.(e.target.value as ShippingCityCode);
             }}
           >
             <option value="khartoum">{locale === "ar" ? "الخرطوم" : "Khartoum"}</option>
@@ -123,7 +138,7 @@ export function CheckoutForm({
             {...form.register("city")}
             onChange={(e) => {
               form.setValue("city", e.target.value);
-              onCityChange?.(e.target.value as "cairo" | "giza" | "alexandria" | "other");
+              onCityChange?.(e.target.value as ShippingCityCode);
             }}
           >
             <option value="cairo">{locale === "ar" ? "القاهرة" : "Cairo"}</option>
@@ -143,13 +158,59 @@ export function CheckoutForm({
         placeholder={locale === "ar" ? "العنوان التفصيلي" : "Detailed address"}
         {...form.register("detailedAddress")}
       />
+
+      <div className="space-y-3 pt-2">
+        <div>
+          <h3 className="font-display text-lg text-text">
+            {locale === "ar" ? "تحديد الموقع على الخريطة *" : "Pin Location on Map *"}
+          </h3>
+          <p className="text-sm text-text-soft">
+            {locale === "ar"
+              ? "يرجى تحديد موقعك الدقيق لضمان وصول المندوب بأسرع وقت."
+              : "Please pin your exact location to ensure fast delivery."}
+          </p>
+        </div>
+        <LocationPicker
+          locale={locale}
+          defaultCenter={
+            defaults?.countryCode === "SD"
+              ? { lat: 15.5007, lng: 32.5599 } // Khartoum
+              : { lat: 30.0444, lng: 31.2357 } // Cairo
+          }
+          initialLocation={
+            defaults?.latitude && defaults?.longitude
+              ? { lat: defaults.latitude, lng: defaults.longitude }
+              : undefined
+          }
+          onLocationSelect={(data) => {
+            form.setValue("latitude", data.lat, { shouldValidate: true });
+            form.setValue("longitude", data.lng, { shouldValidate: true });
+            
+            // Auto-fill address details from map selection
+            if (data.city) form.setValue("city", data.city.toLowerCase());
+            if (data.area) form.setValue("area", data.area);
+            if (data.address) form.setValue("detailedAddress", data.address);
+
+            // Trigger shipping fee update if city changed
+            if (data.city && onCityChange) {
+               onCityChange(data.city.toLowerCase() as any);
+            }
+          }}
+        />
+        {(form.formState.errors.latitude || form.formState.errors.longitude) && (
+          <p className="text-sm text-red-500">
+            {locale === "ar" ? "يرجى تحديد الموقع الدقيق على الخريطة" : "Please pin your exact location on the map"}
+          </p>
+        )}
+      </div>
+
       <Textarea
         placeholder={locale === "ar" ? "ملاحظات الطلب (اختياري)" : "Order notes (optional)"}
         {...form.register("notes")}
       />
       {showSubmit ? (
-        <Button type="submit" className="w-full" size="lg">
-          {locale === "ar" ? "تأكيد الطلب" : "Confirm order"}
+        <Button type="submit" className="w-full" size="lg" disabled={isPending}>
+          {isPending ? (locale === "ar" ? "جاري التأكيد..." : "Confirming...") : (locale === "ar" ? "تأكيد الطلب" : "Confirm order")}
         </Button>
       ) : null}
     </form>

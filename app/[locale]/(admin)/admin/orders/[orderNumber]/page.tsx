@@ -14,6 +14,7 @@ export default async function AdminOrderDetailPage({
   const { locale, orderNumber } = await params;
   const ar = locale === "ar";
   const order = await getAdminOrderByNumber(orderNumber);
+  const orderCurrency = order?.countryCode === "SD" ? "SDG" : "EGP";
 
   if (!order) notFound();
 
@@ -63,7 +64,7 @@ export default async function AdminOrderDetailPage({
                   <div className="text-end">
                     <p className="text-sm text-white/60">×{item.quantity}</p>
                     <p className="text-sm text-white/80">
-                      {formatCurrency(Number(item.totalPrice), locale)}
+                      {formatCurrency(Number(item.totalPrice), locale, orderCurrency)}
                     </p>
                   </div>
                 </div>
@@ -73,15 +74,15 @@ export default async function AdminOrderDetailPage({
             <div className="mt-4 space-y-2 border-t border-white/5 pt-4">
               <div className="flex justify-between text-sm">
                 <span className="text-white/40">{ar ? "المجموع الفرعي" : "Subtotal"}</span>
-                <span className="text-white/70">{formatCurrency(Number(order.subtotal), locale)}</span>
+                <span className="text-white/70">{formatCurrency(Number(order.subtotal), locale, orderCurrency)}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-white/40">{ar ? "رسوم الشحن" : "Shipping"}</span>
-                <span className="text-white/70">{formatCurrency(Number(order.shippingFee), locale)}</span>
+                <span className="text-white/70">{formatCurrency(Number(order.shippingFee), locale, orderCurrency)}</span>
               </div>
               <div className="flex justify-between border-t border-white/5 pt-2 text-base font-semibold">
                 <span className="text-white/60">{ar ? "الإجمالي" : "Total"}</span>
-                <span className="text-rose-300">{formatCurrency(Number(order.total), locale)}</span>
+                <span className="text-rose-300">{formatCurrency(Number(order.total), locale, orderCurrency)}</span>
               </div>
             </div>
           </div>
@@ -157,6 +158,17 @@ export default async function AdminOrderDetailPage({
                   <p>{order.addressSnapshot.city}</p>
                   <p>{order.addressSnapshot.area}</p>
                   <p>{order.addressSnapshot.detailedAddress}</p>
+                  {(order.addressSnapshot.latitude && order.addressSnapshot.longitude) ? (
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${order.addressSnapshot.latitude},${order.addressSnapshot.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex items-center gap-2 rounded-xl bg-rose-500/10 px-4 py-2 text-xs font-medium text-rose-300 transition-colors hover:bg-rose-500/20"
+                    >
+                      <MapPin className="h-3.5 w-3.5" />
+                      {ar ? "عرض الموقع على الخريطة" : "View on Google Maps"}
+                    </a>
+                  ) : null}
                   {order.addressSnapshot.notes ? (
                     <p className="text-xs text-white/30">
                       {ar ? "ملاحظات:" : "Notes:"} {order.addressSnapshot.notes}

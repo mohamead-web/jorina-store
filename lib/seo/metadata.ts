@@ -28,7 +28,7 @@ export function buildMetadata({
       siteName: "JORINA",
       images: [
         {
-          url: absoluteUrl("/brand/jorina-logo.jpeg"),
+          url: absoluteUrl("/brand/logo.png"),
           width: 1200,
           height: 1200,
           alt: "JORINA brand logo"
@@ -39,7 +39,7 @@ export function buildMetadata({
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: [absoluteUrl("/brand/jorina-logo.jpeg")]
+      images: [absoluteUrl("/brand/logo.png")]
     }
   };
 }
