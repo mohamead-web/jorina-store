@@ -64,7 +64,7 @@ export function EditorialHeroContent({
       >
         <p
           className={cn(
-            "font-ui uppercase tracking-[0.4em] text-text-soft",
+            "font-ui uppercase tracking-[0.4em] text-text-soft leading-loose pb-1",
             isOverlay ? "mb-6 text-[10px] sm:mb-10 sm:text-[11px]" : "mb-4 text-[10px] sm:mb-5 sm:text-[11px]"
           )}
         >

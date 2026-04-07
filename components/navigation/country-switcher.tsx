@@ -34,10 +34,10 @@ export function CountrySwitcher({
         }}
       >
         <option value="EG">
-          {locale === "ar" ? "ÙØµØ±" : "Egypt"}
+          {locale === "ar" ? "مصر" : "Egypt"}
         </option>
         <option value="SD">
-          {locale === "ar" ? "Ø§ÙØ³ÙØ¯Ø§Ù" : "Sudan"}
+          {locale === "ar" ? "السودان" : "Sudan"}
         </option>
       </select>
     </label>

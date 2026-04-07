@@ -2,15 +2,6 @@ import { Reveal } from "@/components/ui/reveal";
 import { ProductCard } from "@/components/shop/product-card";
 import { SkeletonCard } from "@/components/ui/skeleton-card";
 
-function chunkProducts<T>(items: T[], size: number) {
-  const chunks: T[][] = [];
-
-  for (let index = 0; index < items.length; index += size) {
-    chunks.push(items.slice(index, index + size));
-  }
-
-  return chunks;
-}
 
 export function ProductGrid({
   locale,
@@ -45,21 +36,27 @@ export function ProductGrid({
   }
 
   return (
-    <div className="space-y-4 sm:space-y-5">
-      {chunkProducts(products, 3).map((row, rowIndex) => (
-        <Reveal key={row.map((product) => product.id).join("-")} delay={rowIndex * 0.06}>
-          <div className="grid gap-4 min-[390px]:grid-cols-2 xl:grid-cols-3">
-            {row.map((product) => (
-              <ProductCard
-                key={product.id}
-                locale={locale}
-                product={product}
-                isFavorite={favoriteIds?.has(product.id)}
-              />
-            ))}
-          </div>
-        </Reveal>
-      ))}
+    <div className="grid gap-4 min-[390px]:grid-cols-2 xl:grid-cols-3">
+      {products.map((product, index) => {
+        // Option 3: If the total number of products is odd, hide the very last product on 2-column layouts (mobile/tablet) to prevent an empty slot on the left.
+        const isOddTotal = products.length % 2 !== 0;
+        const isLastItem = index === products.length - 1;
+        const hideOnMobile = isOddTotal && isLastItem;
+
+        return (
+          <Reveal 
+            key={product.id} 
+            delay={index * 0.06}
+            className={hideOnMobile ? "max-xl:hidden" : ""}
+          >
+            <ProductCard
+              locale={locale}
+              product={product}
+              isFavorite={favoriteIds?.has(product.id)}
+            />
+          </Reveal>
+        );
+      })}
     </div>
   );
 }
