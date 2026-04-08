@@ -279,15 +279,18 @@ export const getCategoryBySlug = cache(async (locale: AppLocale, slug: string) =
     seoTitle: pickTranslation(category.translations, locale)?.seoTitle ?? null,
     seoDescription:
       pickTranslation(category.translations, locale)?.seoDescription ?? null,
-    products: category.productCategories.map((entry) =>
-      mapProductCard(entry.product, locale)
-    )
+    products: category.productCategories
+      .filter((entry) => entry.product.status === "ACTIVE")
+      .map((entry) => mapProductCard(entry.product, locale))
   };
 });
 
 export const getProductBySlug = cache(async (locale: AppLocale, slug: string) => {
-  const product = await prisma.product.findUnique({
-    where: { slug },
+  const product = await prisma.product.findFirst({
+    where: {
+      slug,
+      status: "ACTIVE"
+    },
     include: productInclude
   });
 

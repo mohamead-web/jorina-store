@@ -10,7 +10,12 @@ function getPrimaryImage(items: Array<{ isPrimary: boolean; sortOrder: number; p
 
 export async function getWishlist(userId: string, locale: string) {
   const wishlist = await prisma.wishlistItem.findMany({
-    where: { userId },
+    where: {
+      userId,
+      product: {
+        status: "ACTIVE"
+      }
+    },
     include: {
       product: {
         include: {
@@ -57,6 +62,18 @@ export async function getWishlist(userId: string, locale: string) {
 }
 
 export async function toggleWishlist(userId: string, productId: string) {
+  const product = await prisma.product.findFirst({
+    where: {
+      id: productId,
+      status: "ACTIVE"
+    },
+    select: { id: true }
+  });
+
+  if (!product) {
+    throw new Error("Product is no longer available");
+  }
+
   const existing = await prisma.wishlistItem.findUnique({
     where: {
       userId_productId: {
@@ -90,7 +107,12 @@ export async function getWishlistIds(userId?: string | null) {
   }
 
   const items = await prisma.wishlistItem.findMany({
-    where: { userId },
+    where: {
+      userId,
+      product: {
+        status: "ACTIVE"
+      }
+    },
     select: { productId: true }
   });
 

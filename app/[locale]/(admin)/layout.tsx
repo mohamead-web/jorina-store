@@ -1,11 +1,12 @@
 import { BarChart3, ClipboardList, Home, LayoutDashboard, Package } from "lucide-react";
-import { Link } from "@/lib/i18n/navigation";
 
 import { requireAdmin } from "@/lib/auth/guards";
+import { Link } from "@/lib/i18n/navigation";
 
 const adminLinks = [
   { href: "/admin", icon: LayoutDashboard, labelAr: "لوحة التحكم", labelEn: "Dashboard" },
   { href: "/admin/orders", icon: ClipboardList, labelAr: "الطلبات", labelEn: "Orders" },
+  { href: "/admin/products", icon: Package, labelAr: "المنتجات", labelEn: "Products" },
   { href: "/", icon: Home, labelAr: "الموقع", labelEn: "Go to site" }
 ];
 
@@ -22,7 +23,6 @@ export default async function AdminLayout({
 
   return (
     <div className="flex min-h-screen bg-[#0f0f0f]">
-      {/* Sidebar */}
       <aside className="fixed inset-x-0 bottom-0 z-40 flex h-16 w-full border-t border-white/5 bg-[#141414] lg:inset-y-0 lg:start-0 lg:h-full lg:w-64 lg:flex-col lg:border-e lg:border-t-0">
         <div className="hidden h-16 items-center gap-3 border-b border-white/5 px-6 lg:flex">
           <BarChart3 className="h-6 w-6 text-rose-400" />
@@ -56,11 +56,8 @@ export default async function AdminLayout({
         </div>
       </aside>
 
-      {/* Main content */}
       <main className="flex-1 pb-16 lg:pb-0 lg:ps-64">
-        <div className="px-4 py-6 sm:px-8">
-          {children}
-        </div>
+        <div className="px-4 py-6 sm:px-8">{children}</div>
       </main>
     </div>
   );

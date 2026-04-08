@@ -1,18 +1,18 @@
 "use client";
 
 import { Heart, ShoppingBag } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
 import { useTranslations } from "next-intl";
 import { startTransition, useState } from "react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
-import { addToCartAction } from "@/lib/actions/cart-actions";
-import { toggleWishlistAction } from "@/lib/actions/wishlist-actions";
+import { usePreferences } from "@/components/layout/providers";
 import { Button } from "@/components/ui/button";
 import { QuantitySelector } from "@/components/ui/quantity-selector";
+import { addToCartAction } from "@/lib/actions/cart-actions";
+import { toggleWishlistAction } from "@/lib/actions/wishlist-actions";
 import { formatCurrency } from "@/lib/utils";
-import { usePreferences } from "@/components/layout/providers";
 
 export function ProductBuyBox({
   locale,
@@ -53,20 +53,32 @@ export function ProductBuyBox({
   const selectedVariant =
     product.variants.find((variant) => variant.id === selectedVariantId) ?? null;
   const currentPrice = selectedVariant?.price ?? product.price;
-  const isOutOfStock = Boolean(selectedVariant) && (selectedVariant?.stockQty ?? 0) <= 0;
+  const isOutOfStock =
+    Boolean(selectedVariant) && (selectedVariant?.stockQty ?? 0) <= 0;
 
   const handleAddToCart = () => {
     setIsCartPending(true);
     startTransition(async () => {
-      await addToCartAction({
+      const result = await addToCartAction({
         localeCode: locale,
         productId: product.id,
         variantId: selectedVariantId,
         quantity
       });
       setIsCartPending(false);
-      router.refresh();
-      toast.success(locale === "ar" ? "تمت الإضافة إلى السلة" : "Added to cart");
+
+      if (result.success) {
+        router.refresh();
+        toast.success(locale === "ar" ? "تمت الإضافة إلى السلة" : "Added to cart");
+        return;
+      }
+
+      toast.error(
+        result.error ??
+          (locale === "ar"
+            ? "تعذر إضافة المنتج إلى السلة"
+            : "Failed to add product to cart")
+      );
     });
   };
 
@@ -128,10 +140,15 @@ export function ProductBuyBox({
               <div className="mb-3 flex items-center justify-between gap-3">
                 <p className="text-sm font-medium text-text">{t("shade")}</p>
                 {selectedVariant?.shadeLabel ? (
-                  <span className="text-xs text-text-muted">{selectedVariant.shadeLabel}</span>
+                  <span className="text-xs text-text-muted">
+                    {selectedVariant.shadeLabel}
+                  </span>
                 ) : null}
               </div>
-              <div className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap" data-lenis-prevent>
+              <div
+                className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap"
+                data-lenis-prevent
+              >
                 {product.variants.map((variant) => (
                   <button
                     key={variant.id}

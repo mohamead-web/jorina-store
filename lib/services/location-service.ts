@@ -1,10 +1,5 @@
 "use server";
 
-/**
- * Basic reverse geocoding using Nominatim (OpenStreetMap)
- * Documentation: https://nominatim.org/release-docs/latest/api/Reverse/
- */
-
 export type ReverseGeocodeResult = {
   address: string;
   city: string;
@@ -12,7 +7,10 @@ export type ReverseGeocodeResult = {
   country: string;
 };
 
-export async function reverseGeocode(lat: number, lng: number): Promise<ReverseGeocodeResult | null> {
+export async function reverseGeocode(
+  lat: number,
+  lng: number
+): Promise<ReverseGeocodeResult | null> {
   try {
     const response = await fetch(
       `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ar,en`,
@@ -23,21 +21,26 @@ export async function reverseGeocode(lat: number, lng: number): Promise<ReverseG
       }
     );
 
-    if (!response.ok) return null;
+    if (!response.ok) {
+      return null;
+    }
 
     const data = await response.json();
-    const addr = data.address || {};
+    const address = data.address ?? {};
+    const city =
+      address.city ?? address.town ?? address.state ?? address.governorate ?? "";
+    const area =
+      address.suburb ??
+      address.neighbourhood ??
+      address.city_district ??
+      address.county ??
+      "";
 
-    // Extract city/state/town
-    const city = addr.city || addr.town || addr.state || addr.governorate || "";
-    // Extract suburb/neighbourhood/area
-    const area = addr.suburb || addr.neighbourhood || addr.city_district || addr.county || "";
-    
     return {
-      address: data.display_name || "",
-      city: city,
-      area: area,
-      country: addr.country || ""
+      address: data.display_name ?? "",
+      city,
+      area,
+      country: address.country ?? ""
     };
   } catch (error) {
     console.error("Reverse geocoding error:", error);
@@ -56,13 +59,16 @@ export async function searchLocation(query: string) {
       }
     );
 
-    if (!response.ok) return [];
+    if (!response.ok) {
+      return [];
+    }
 
     const data = await response.json();
-    return data.map((item: any) => ({
+
+    return data.map((item: { display_name: string; lat: string; lon: string }) => ({
       label: item.display_name,
-      lat: parseFloat(item.lat),
-      lng: parseFloat(item.lon)
+      lat: Number.parseFloat(item.lat),
+      lng: Number.parseFloat(item.lon)
     }));
   } catch (error) {
     console.error("Search location error:", error);

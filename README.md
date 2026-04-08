@@ -44,6 +44,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 NEXTAUTH_SECRET="change-me"
 GOOGLE_CLIENT_ID=""
 GOOGLE_CLIENT_SECRET=""
+BLOB_READ_WRITE_TOKEN=""
 DEFAULT_LOCALE="ar"
 DEFAULT_COUNTRY="EG"
 ADMIN_EMAILS="admin@example.com"
@@ -51,6 +52,7 @@ ADMIN_EMAILS="admin@example.com"
 
 Notes:
 - Google login stays safely inactive until `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are provided.
+- Product image uploads from the admin panel require `BLOB_READ_WRITE_TOKEN`.
 - Cash on delivery works without any payment gateway setup.
 - In production on Vercel, set `NEXTAUTH_URL` and `NEXT_PUBLIC_APP_URL` to your live domain.
 

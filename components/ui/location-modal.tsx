@@ -1,20 +1,30 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import { X, Search, Crosshair, MapPin, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { reverseGeocode, searchLocation } from "@/lib/services/location-service";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Crosshair,
+  Loader2,
+  MapPin,
+  Search
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 
-// Dynamically import MapComponent to avoid SSR issues with Leaflet
+import { Button } from "@/components/ui/button";
+import {
+  reverseGeocode,
+  searchLocation
+} from "@/lib/services/location-service";
+
 const MapComponent = dynamic(() => import("./map-component"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center bg-gray-50">
       <Loader2 className="h-8 w-8 animate-spin text-blush" />
     </div>
-  ),
+  )
 });
 
 interface LocationModalProps {
@@ -36,56 +46,66 @@ export function LocationModal({
   onClose,
   onConfirm,
   locale,
-  initialLocation,
+  initialLocation
 }: LocationModalProps) {
   const t = useTranslations("location");
-  const [coords, setCoords] = useState(initialLocation || { lat: 30.0444, lng: 31.2357 });
+  const [coords, setCoords] = useState(
+    initialLocation || { lat: 30.0444, lng: 31.2357 }
+  );
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [area, setArea] = useState("");
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<
+    Array<{ label: string; lat: number; lng: number }>
+  >([]);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchAddress = useCallback(async (lat: number, lng: number) => {
     setLoading(true);
     const result = await reverseGeocode(lat, lng);
+
     if (result) {
       setAddress(result.address);
       setCity(result.city);
       setArea(result.area);
     }
+
     setLoading(false);
   }, []);
 
   useEffect(() => {
     if (isOpen) {
-      fetchAddress(coords.lat, coords.lng);
+      void fetchAddress(coords.lat, coords.lng);
     }
-  }, [isOpen, coords.lat, coords.lng, fetchAddress]);
+  }, [coords.lat, coords.lng, fetchAddress, isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   const handleGetCurrentLocation = () => {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const newCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-        setCoords(newCoords);
+      navigator.geolocation.getCurrentPosition((position) => {
+        setCoords({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        });
       });
     }
   };
 
-  const handleSearch = (val: string) => {
-    setSearchQuery(val);
-    
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
     }
 
-    if (val.length > 2) {
+    if (value.length > 2) {
       searchTimeoutRef.current = setTimeout(async () => {
-        const results = await searchLocation(val);
+        const results = await searchLocation(value);
         setSearchResults(results);
       }, 500);
     } else {
@@ -95,105 +115,118 @@ export function LocationModal({
 
   return (
     <div className="location-modal-overlay">
-      {/* Header */}
       <div className="location-modal-header">
-        <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-          {locale === "ar" ? <ArrowRight className="h-6 w-6" /> : <ArrowLeft className="h-6 w-6" />}
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-full p-2 transition-colors hover:bg-gray-100"
+        >
+          {locale === "ar" ? (
+            <ArrowRight className="h-6 w-6" />
+          ) : (
+            <ArrowLeft className="h-6 w-6" />
+          )}
         </button>
-        <h1 className="flex-1 text-center font-display text-xl pt-1">
+        <h1 className="flex-1 pt-1 text-center font-display text-xl">
           {t("addNewAddress")}
         </h1>
-        <div className="w-10" /> {/* Spacer */}
+        <div className="w-10" />
       </div>
 
-      {/* Map Content */}
       <div className="location-modal-map-container">
-        {/* Search Bar */}
         <div className="absolute left-4 right-4 top-4 z-[1001] flex flex-col gap-2">
-          <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-blush transition-colors" />
+          <div className="group relative">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 transition-colors group-focus-within:text-blush" />
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => handleSearch(e.target.value)}
+              onChange={(event) => handleSearch(event.target.value)}
               placeholder={t("searchPlaceholder")}
               className="h-14 w-full rounded-2xl border-none bg-white px-12 text-sm shadow-xl outline-none focus:ring-2 focus:ring-blush"
               dir={locale === "ar" ? "rtl" : "ltr"}
             />
-            {loading && <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 animate-spin text-blush" />}
+            {loading ? (
+              <Loader2 className="absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 animate-spin text-blush" />
+            ) : null}
           </div>
 
-          {/* Search Results */}
-          {searchResults.length > 0 && (
+          {searchResults.length > 0 ? (
             <div className="search-results-container p-2">
-              {searchResults.map((res, i) => (
+              {searchResults.map((result, index) => (
                 <button
-                  key={i}
-                  className="w-full flex items-start gap-3 p-4 hover:bg-gray-50 rounded-xl text-start transition-colors border-b last:border-0 border-gray-100"
+                  key={`${result.lat}-${result.lng}-${index}`}
+                  type="button"
+                  className="w-full rounded-xl border-b border-gray-100 p-4 text-start transition-colors last:border-0 hover:bg-gray-50"
                   onClick={() => {
-                    const newCoords = { lat: res.lat, lng: res.lng };
-                    setCoords(newCoords);
+                    setCoords({ lat: result.lat, lng: result.lng });
                     setSearchResults([]);
                     setSearchQuery("");
                   }}
                 >
-                  <MapPin className="h-5 w-5 shrink-0 text-gray-400 mt-0.5" />
-                  <span className="text-sm text-text-soft line-clamp-2">{res.label}</span>
+                  <div className="flex items-start gap-3">
+                    <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-gray-400" />
+                    <span className="line-clamp-2 text-sm text-text-soft">
+                      {result.label}
+                    </span>
+                  </div>
                 </button>
               ))}
             </div>
-          )}
+          ) : null}
         </div>
 
-        {/* Use Support Location Button */}
         <button
+          type="button"
           onClick={handleGetCurrentLocation}
-          className="absolute right-4 bottom-4 z-[1001] h-12 px-6 rounded-full bg-white shadow-xl flex items-center gap-2 text-sm font-semibold text-text hover:bg-gray-50 transition-all active:scale-95"
+          className="absolute bottom-4 right-4 z-[1001] flex h-12 items-center gap-2 rounded-full bg-white px-6 text-sm font-semibold text-text shadow-xl transition-all active:scale-95 hover:bg-gray-50"
         >
           <Crosshair className="h-5 w-5 text-blush" />
           {t("useCurrentLocation")}
         </button>
 
-        {/* Center Pin Overlay */}
         <div className="location-modal-center-pin">
-          <div className="location-modal-pin-label">
-            {t("deliveryPin")}
-          </div>
+          <div className="location-modal-pin-label">{t("deliveryPin")}</div>
           <div className="relative h-12 w-12">
-             <div className="absolute inset-0 bg-blush/20 rounded-full animate-ping" />
-             <MapPin className="relative h-12 w-12 text-blush drop-shadow-lg" />
+            <div className="absolute inset-0 animate-ping rounded-full bg-blush/20" />
+            <MapPin className="relative h-12 w-12 text-blush drop-shadow-lg" />
           </div>
         </div>
 
         <MapComponent
           center={coords}
           onLocationChange={(lat, lng) => {
-            const newCoords = { lat, lng };
-            setCoords(newCoords);
+            setCoords({ lat, lng });
           }}
         />
       </div>
 
-      {/* Bottom Bar */}
       <div className="location-modal-bottom-bar space-y-4">
         <div className="flex items-start gap-4">
-          <div className="h-12 w-12 shrink-0 bg-background-soft rounded-2xl flex items-center justify-center">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-background-soft">
             <MapPin className="h-6 w-6 text-blush" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[10px] uppercase tracking-wider text-text-muted font-bold mb-1">
+          <div className="min-w-0 flex-1">
+            <p className="mb-1 text-[10px] font-bold uppercase tracking-wider text-text-muted">
               {t("currentLocation")}
             </p>
-            <p className="text-sm font-semibold text-text line-clamp-2 leading-relaxed">
+            <p className="line-clamp-2 text-sm font-semibold leading-relaxed text-text">
               {loading ? t("loadingAddress") : address || t("pinLocation")}
             </p>
           </div>
         </div>
-        
+
         <Button
           disabled={loading || !address}
-          onClick={() => onConfirm({ lat: coords.lat, lng: coords.lng, address, city, area })}
-          className="w-full h-14 rounded-2xl text-base shadow-lg shadow-blush/20"
+          onClick={() =>
+            onConfirm({
+              lat: coords.lat,
+              lng: coords.lng,
+              address,
+              city,
+              area
+            })
+          }
+          className="h-14 w-full rounded-2xl text-base shadow-lg shadow-blush/20"
         >
           {t("confirmLocation")}
         </Button>

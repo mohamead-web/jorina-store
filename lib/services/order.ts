@@ -40,6 +40,14 @@ export async function createOrderFromCart({
   }
 
   for (const item of cart.items) {
+    if (item.product.status !== "ACTIVE") {
+      throw new Error("One or more products are no longer available");
+    }
+
+    if (item.variantId && !item.variant) {
+      throw new Error("One or more selected variants are no longer available");
+    }
+
     const availableStock = item.variant ? item.variant.stockQty : item.product.totalStock;
 
     if (availableStock < item.quantity) {

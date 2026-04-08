@@ -11,6 +11,14 @@ import {
 } from "@/lib/services/preferences";
 import { checkoutSchema } from "@/lib/validators/checkout";
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return "Checkout failed. Please try again.";
+}
+
 export async function placeOrderAction(rawInput: unknown) {
   try {
     const input = checkoutSchema.parse(rawInput);
@@ -50,7 +58,7 @@ export async function placeOrderAction(rawInput: unknown) {
     console.error("Checkout error:", error);
     return {
       success: false,
-      error: "Checkout failed. Please try again."
+      error: getErrorMessage(error)
     };
   }
 }

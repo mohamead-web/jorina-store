@@ -2,20 +2,20 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { startTransition, useState, useTransition, useEffect } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { placeOrderAction } from "@/lib/actions/checkout-actions";
+import { LocationPicker } from "@/components/ui/location-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { placeOrderAction } from "@/lib/actions/checkout-actions";
 import { type ShippingCityCode } from "@/lib/constants/commerce";
 import {
   checkoutSchema,
   type CheckoutFormValues
 } from "@/lib/validators/checkout";
-import { LocationPicker } from "@/components/ui/location-picker";
 
 export function CheckoutForm({
   locale,
@@ -67,26 +67,39 @@ export function CheckoutForm({
       onSubmit={form.handleSubmit((values) => {
         startTransition(async () => {
           const cleanPhone = values.phoneNumber.replace(/^0+/, "");
-          const finalValues = { ...values, phoneNumber: `${callingCode}${cleanPhone}` };
+          const finalValues = {
+            ...values,
+            phoneNumber: `${callingCode}${cleanPhone}`
+          };
           const result = await placeOrderAction(finalValues);
+
           if (result.success && result.orderNumber) {
             router.push(`/${locale}/checkout/success?order=${result.orderNumber}`);
             router.refresh();
             toast.success(locale === "ar" ? "تم تأكيد استلام الطلب" : "Order received");
-          } else {
-            toast.error(locale === "ar" ? "حدث خطأ أثناء تأكيد الطلب، حاول مرة أخرى" : "Checkout failed. Please try again.");
+            return;
           }
+
+          toast.error(
+            result.error ??
+              (locale === "ar"
+                ? "حدث خطأ أثناء تأكيد الطلب، حاول مرة أخرى"
+                : "Checkout failed. Please try again.")
+          );
         });
       })}
     >
       <h2 className="font-display text-3xl text-text">
-        {locale === "ar" ? "معلومات التواصل والشحن (الدفع عند الاستلام)" : "Contact & shipping (COD)"}
+        {locale === "ar"
+          ? "معلومات التواصل والشحن (الدفع عند الاستلام)"
+          : "Contact & shipping (COD)"}
       </h2>
       <p className="text-sm leading-7 text-text-soft">
         {locale === "ar"
-          ? "الرجاء إدخال بيانات التوصيل بدقة لضمان وصول طلبك في أسرع وقت. الدفع سيكون نقداً عند الاستلام."
+          ? "الرجاء إدخال بيانات التوصيل بدقة لضمان وصول طلبك في أسرع وقت. الدفع سيكون نقدًا عند الاستلام."
           : "Please enter your delivery details accurately. Payment will be collected in cash upon delivery."}
       </p>
+
       <Input
         type="email"
         autoComplete="email"
@@ -98,11 +111,12 @@ export function CheckoutForm({
         placeholder={locale === "ar" ? "الاسم الكامل" : "Full name"}
         {...form.register("fullName")}
       />
+
       <div className="flex gap-2">
         <select
           className="flex h-11 w-max min-w-[120px] rounded-md border border-black/10 bg-transparent px-2 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black/20"
           value={callingCode}
-          onChange={(e) => setCallingCode(e.target.value)}
+          onChange={(event) => setCallingCode(event.target.value)}
           dir="ltr"
         >
           <option value="+20">🇪🇬 +20 (مصر)</option>
@@ -113,18 +127,21 @@ export function CheckoutForm({
           dir="ltr"
           type="tel"
           autoComplete="tel"
-          placeholder={locale === "ar" ? "رقم الهاتف (بدون صفر)" : "Phone number (no zero)"}
+          placeholder={
+            locale === "ar" ? "رقم الهاتف (بدون صفر)" : "Phone number (no zero)"
+          }
           {...form.register("phoneNumber")}
         />
       </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         {defaults?.countryCode === "SD" ? (
           <select
             className="flex h-11 w-full rounded-md border border-black/10 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black/20"
             {...form.register("city")}
-            onChange={(e) => {
-              form.setValue("city", e.target.value);
-              onCityChange?.(e.target.value as ShippingCityCode);
+            onChange={(event) => {
+              form.setValue("city", event.target.value);
+              onCityChange?.(event.target.value as ShippingCityCode);
             }}
           >
             <option value="khartoum">{locale === "ar" ? "الخرطوم" : "Khartoum"}</option>
@@ -136,15 +153,17 @@ export function CheckoutForm({
           <select
             className="flex h-11 w-full rounded-md border border-black/10 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-black/20"
             {...form.register("city")}
-            onChange={(e) => {
-              form.setValue("city", e.target.value);
-              onCityChange?.(e.target.value as ShippingCityCode);
+            onChange={(event) => {
+              form.setValue("city", event.target.value);
+              onCityChange?.(event.target.value as ShippingCityCode);
             }}
           >
             <option value="cairo">{locale === "ar" ? "القاهرة" : "Cairo"}</option>
             <option value="giza">{locale === "ar" ? "الجيزة" : "Giza"}</option>
             <option value="alexandria">{locale === "ar" ? "الإسكندرية" : "Alexandria"}</option>
-            <option value="other">{locale === "ar" ? "محافظة أخرى" : "Other Governorate"}</option>
+            <option value="other">
+              {locale === "ar" ? "محافظة أخرى" : "Other Governorate"}
+            </option>
           </select>
         )}
         <Input
@@ -153,6 +172,7 @@ export function CheckoutForm({
           {...form.register("area")}
         />
       </div>
+
       <Textarea
         autoComplete="street-address"
         placeholder={locale === "ar" ? "العنوان التفصيلي" : "Detailed address"}
@@ -174,8 +194,8 @@ export function CheckoutForm({
           locale={locale}
           defaultCenter={
             defaults?.countryCode === "SD"
-              ? { lat: 15.5007, lng: 32.5599 } // Khartoum
-              : { lat: 30.0444, lng: 31.2357 } // Cairo
+              ? { lat: 15.5007, lng: 32.5599 }
+              : { lat: 30.0444, lng: 31.2357 }
           }
           initialLocation={
             defaults?.latitude && defaults?.longitude
@@ -185,21 +205,27 @@ export function CheckoutForm({
           onLocationSelect={(data) => {
             form.setValue("latitude", data.lat, { shouldValidate: true });
             form.setValue("longitude", data.lng, { shouldValidate: true });
-            
-            // Auto-fill address details from map selection
-            if (data.city) form.setValue("city", data.city.toLowerCase());
-            if (data.area) form.setValue("area", data.area);
-            if (data.address) form.setValue("detailedAddress", data.address);
 
-            // Trigger shipping fee update if city changed
+            if (data.city) {
+              form.setValue("city", data.city.toLowerCase());
+            }
+            if (data.area) {
+              form.setValue("area", data.area);
+            }
+            if (data.address) {
+              form.setValue("detailedAddress", data.address);
+            }
+
             if (data.city && onCityChange) {
-               onCityChange(data.city.toLowerCase() as any);
+              onCityChange(data.city.toLowerCase() as ShippingCityCode);
             }
           }}
         />
         {(form.formState.errors.latitude || form.formState.errors.longitude) && (
           <p className="text-sm text-red-500">
-            {locale === "ar" ? "يرجى تحديد الموقع الدقيق على الخريطة" : "Please pin your exact location on the map"}
+            {locale === "ar"
+              ? "يرجى تحديد الموقع الدقيق على الخريطة"
+              : "Please pin your exact location on the map"}
           </p>
         )}
       </div>
@@ -208,9 +234,16 @@ export function CheckoutForm({
         placeholder={locale === "ar" ? "ملاحظات الطلب (اختياري)" : "Order notes (optional)"}
         {...form.register("notes")}
       />
+
       {showSubmit ? (
         <Button type="submit" className="w-full" size="lg" disabled={isPending}>
-          {isPending ? (locale === "ar" ? "جاري التأكيد..." : "Confirming...") : (locale === "ar" ? "تأكيد الطلب" : "Confirm order")}
+          {isPending
+            ? locale === "ar"
+              ? "جارٍ التأكيد..."
+              : "Confirming..."
+            : locale === "ar"
+              ? "تأكيد الطلب"
+              : "Confirm order"}
         </Button>
       ) : null}
     </form>

@@ -207,6 +207,10 @@ export async function addCartItem({
     throw new Error("Product not found");
   }
 
+  if (product.status !== "ACTIVE") {
+    throw new Error("This product is no longer available");
+  }
+
   if (!Number.isInteger(quantity) || quantity <= 0) {
     throw new Error("Quantity must be a positive integer");
   }

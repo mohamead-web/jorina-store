@@ -3,16 +3,16 @@
 import Image from "next/image";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { signIn, useSession } from "next-auth/react";
+import { useTranslations } from "next-intl";
 import { startTransition, useState } from "react";
 import { toast } from "sonner";
 
+import { usePreferences } from "@/components/layout/providers";
 import { addToCartAction } from "@/lib/actions/cart-actions";
 import { toggleWishlistAction } from "@/lib/actions/wishlist-actions";
 import { Link } from "@/lib/i18n/navigation";
 import { formatCurrency } from "@/lib/utils";
-import { usePreferences } from "@/components/layout/providers";
 
 type ProductCardProps = {
   locale: "ar" | "en";
@@ -43,8 +43,9 @@ export function ProductCard({
   const [favorite, setFavorite] = useState(isFavorite);
   const [isCartPending, setIsCartPending] = useState(false);
   const [isWishlistPending, setIsWishlistPending] = useState(false);
+
   return (
-    <article className="group flex flex-col h-full overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:border-black/10 sm:rounded-[1.8rem]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-black/5 bg-white shadow-sm transition-all duration-500 hover:border-black/10 hover:shadow-xl sm:rounded-[1.8rem]">
       <div className="relative w-full overflow-hidden bg-[#fafaf8]">
         {product.categoryName ? (
           <div className="absolute start-4 top-4 z-10 rounded-full bg-white/90 px-3 py-1.5 text-[10px] uppercase tracking-[0.2em] text-text backdrop-blur-md">
@@ -86,7 +87,9 @@ export function ProductCard({
           }}
           disabled={isWishlistPending}
         >
-          <Heart className={`h-4 w-4 ${favorite ? "fill-current text-blush-strong" : ""}`} />
+          <Heart
+            className={`h-4 w-4 ${favorite ? "fill-current text-blush-strong" : ""}`}
+          />
         </button>
 
         <Link href={`/products/${product.slug}`} className="block">
@@ -140,14 +143,27 @@ export function ProductCard({
             onClick={() => {
               setIsCartPending(true);
               startTransition(async () => {
-                await addToCartAction({
+                const result = await addToCartAction({
                   localeCode: locale,
                   productId: product.id,
                   quantity: 1
                 });
                 setIsCartPending(false);
-                router.refresh();
-                toast.success(locale === "ar" ? "تمت الإضافة إلى السلة" : "Added to cart");
+
+                if (result.success) {
+                  router.refresh();
+                  toast.success(
+                    locale === "ar" ? "تمت الإضافة إلى السلة" : "Added to cart"
+                  );
+                  return;
+                }
+
+                toast.error(
+                  result.error ??
+                    (locale === "ar"
+                      ? "تعذر إضافة المنتج إلى السلة"
+                      : "Failed to add product to cart")
+                );
               });
             }}
           >

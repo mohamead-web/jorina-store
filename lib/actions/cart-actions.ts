@@ -38,6 +38,14 @@ async function resolveCartOwner() {
   return { userId: null, guestToken };
 }
 
+function getErrorMessage(error: unknown) {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return "Failed to update cart";
+}
+
 export async function addToCartAction(input: {
   localeCode: "ar" | "en";
   productId: string;
@@ -63,7 +71,7 @@ export async function addToCartAction(input: {
     return { success: true };
   } catch (error) {
     console.error("Cart add error:", error);
-    return { success: false, error: "Failed to add to cart" };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
 
@@ -87,7 +95,7 @@ export async function updateCartItemAction(input: {
     return { success: true };
   } catch (error) {
     console.error("Cart update error:", error);
-    return { success: false, error: "Failed to update cart item" };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
 
@@ -109,7 +117,7 @@ export async function removeCartItemAction(input: {
     return { success: true };
   } catch (error) {
     console.error("Cart remove error:", error);
-    return { success: false, error: "Failed to remove cart item" };
+    return { success: false, error: getErrorMessage(error) };
   }
 }
 
