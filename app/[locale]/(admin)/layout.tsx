@@ -1,4 +1,11 @@
-import { BarChart3, ClipboardList, Home, LayoutDashboard, Package } from "lucide-react";
+import {
+  BarChart3,
+  ClipboardList,
+  Home,
+  LayoutDashboard,
+  Package,
+  TicketPercent
+} from "lucide-react";
 
 import { requireAdmin } from "@/lib/auth/guards";
 import { Link } from "@/lib/i18n/navigation";
@@ -7,6 +14,7 @@ const adminLinks = [
   { href: "/admin", icon: LayoutDashboard, labelAr: "لوحة التحكم", labelEn: "Dashboard" },
   { href: "/admin/orders", icon: ClipboardList, labelAr: "الطلبات", labelEn: "Orders" },
   { href: "/admin/products", icon: Package, labelAr: "المنتجات", labelEn: "Products" },
+  { href: "/admin/coupons", icon: TicketPercent, labelAr: "الكوبونات", labelEn: "Coupons" },
   { href: "/", icon: Home, labelAr: "الموقع", labelEn: "Go to site" }
 ];
 

@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 
 import { ReturnRequestForm } from "@/components/account/return-request-form";
-import { StatusPill } from "@/components/ui/status-pill";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { StatusPill } from "@/components/ui/status-pill";
 import { requireUser } from "@/lib/auth/guards";
 import { canRequestReturn, getOrderByOrderNumber } from "@/lib/services/order";
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 export default async function OrderDetailsPage({
   params
@@ -38,10 +38,45 @@ export default async function OrderDetailsPage({
       <div className="premium-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <StatusPill status={order.status} />
-          <p className="text-sm text-text-soft">
+          <p className="text-sm font-semibold text-text">
             {formatCurrency(Number(order.total), typedLocale, orderCurrency)}
           </p>
         </div>
+
+        <div className="mt-6 grid gap-3 rounded-[1.4rem] border border-border bg-white p-4 text-sm text-text-soft sm:grid-cols-2">
+          <div className="flex items-center justify-between gap-3">
+            <span>{typedLocale === "ar" ? "المجموع الفرعي" : "Subtotal"}</span>
+            <span className="text-text">
+              {formatCurrency(Number(order.subtotal), typedLocale, orderCurrency)}
+            </span>
+          </div>
+          {Number(order.discountAmount) > 0 ? (
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <span>{typedLocale === "ar" ? "الخصم" : "Discount"}</span>
+                {order.couponCode ? (
+                  <p className="mt-1 text-xs text-text-muted">
+                    {typedLocale === "ar" ? "الكود" : "Code"}: {order.couponCode}
+                  </p>
+                ) : null}
+              </div>
+              <span className="text-emerald-700">
+                -{formatCurrency(Number(order.discountAmount), typedLocale, orderCurrency)}
+              </span>
+            </div>
+          ) : null}
+          <div className="flex items-center justify-between gap-3">
+            <span>{typedLocale === "ar" ? "رسوم الشحن" : "Shipping"}</span>
+            <span className="text-text">
+              {formatCurrency(Number(order.shippingFee), typedLocale, orderCurrency)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between gap-3 border-t border-border pt-3 font-semibold text-text sm:border-t-0 sm:pt-0">
+            <span>{typedLocale === "ar" ? "الإجمالي" : "Total"}</span>
+            <span>{formatCurrency(Number(order.total), typedLocale, orderCurrency)}</span>
+          </div>
+        </div>
+
         <div className="mt-6 space-y-4">
           {order.items.map((item) => (
             <div key={item.id} className="rounded-[1.4rem] border border-border bg-white p-4">
@@ -52,7 +87,8 @@ export default async function OrderDetailsPage({
                     {item.variantName ?? (typedLocale === "ar" ? "بدون درجة" : "No variant")}
                   </p>
                   <p className="mt-2 text-sm text-text-soft">
-                    {item.quantity} × {formatCurrency(Number(item.unitPrice), typedLocale, orderCurrency)}
+                    {item.quantity} ×{" "}
+                    {formatCurrency(Number(item.unitPrice), typedLocale, orderCurrency)}
                   </p>
                 </div>
                 <p className="text-sm font-semibold text-text">

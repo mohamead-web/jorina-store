@@ -1,6 +1,7 @@
 import { getShippingFeeForLocation } from "@/lib/constants/commerce";
 import { prisma } from "@/lib/db/prisma";
 import { returnWindowDays } from "@/lib/constants/commerce";
+import { resolveCouponForCheckout } from "@/lib/services/coupons";
 import { checkoutSchema, type CheckoutInput } from "@/lib/validators/checkout";
 import type { OrderStatus } from "@/generated/prisma/client";
 
@@ -60,21 +61,34 @@ export async function createOrderFromCart({
     (sum, item) => sum + Number(item.currentUnitPrice) * item.quantity,
     0
   );
-  const total = subtotal + shippingFee;
 
   const order = await prisma.$transaction(async (tx) => {
+    const coupon = payload.couponCode
+      ? await resolveCouponForCheckout({
+          client: tx,
+          code: payload.couponCode,
+          email: payload.email,
+          subtotal
+        })
+      : null;
+    const discountAmount = coupon?.discountAmount ?? 0;
+    const total = subtotal - discountAmount + shippingFee;
+
     const created = await tx.order.create({
       data: {
         orderNumber: createOrderNumber(),
         userId: userId ?? undefined,
         guestToken: guestToken ?? undefined,
         email: payload.email || null,
+        couponId: coupon?.couponId,
         fullName: payload.fullName,
         phoneNumber: payload.phoneNumber,
         countryCode: payload.countryCode,
         localeCode: payload.localeCode,
+        couponCode: coupon?.couponCode,
         paymentMethod: "CASH_ON_DELIVERY",
         status: "PENDING",
+        discountAmount,
         shippingFee,
         subtotal,
         total,
@@ -163,7 +177,7 @@ export async function createOrderFromCart({
 
   return {
     orderNumber: order.orderNumber,
-    total
+    total: Number(order.total)
   };
 }
 

@@ -6,8 +6,8 @@ import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { LocationPicker } from "@/components/ui/location-picker";
 import { Button } from "@/components/ui/button";
+import { LocationPicker } from "@/components/ui/location-picker";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { placeOrderAction } from "@/lib/actions/checkout-actions";
@@ -23,7 +23,9 @@ export function CheckoutForm({
   formId = "checkout-form",
   showSubmit = true,
   onCityChange,
-  onSubmittingChange
+  onSubmittingChange,
+  onEmailChange,
+  couponCode
 }: {
   locale: "ar" | "en";
   defaults?: Partial<CheckoutFormValues>;
@@ -31,6 +33,8 @@ export function CheckoutForm({
   showSubmit?: boolean;
   onCityChange?: (cityCode: ShippingCityCode) => void;
   onSubmittingChange?: (isSubmitting: boolean) => void;
+  onEmailChange?: (email: string) => void;
+  couponCode?: string;
 }) {
   const router = useRouter();
   const initialCallingCode = defaults?.countryCode === "SD" ? "+249" : "+20";
@@ -38,15 +42,14 @@ export function CheckoutForm({
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    if (onSubmittingChange) {
-      onSubmittingChange(isPending);
-    }
+    onSubmittingChange?.(isPending);
   }, [isPending, onSubmittingChange]);
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
       email: defaults?.email ?? "",
+      couponCode: couponCode ?? "",
       fullName: defaults?.fullName ?? "",
       phoneNumber: defaults?.phoneNumber ?? "",
       countryCode: defaults?.countryCode ?? "EG",
@@ -59,6 +62,18 @@ export function CheckoutForm({
       longitude: defaults?.longitude ?? undefined
     }
   });
+  const emailValue = form.watch("email") ?? "";
+
+  useEffect(() => {
+    form.setValue("couponCode", couponCode ?? "", {
+      shouldDirty: true,
+      shouldValidate: true
+    });
+  }, [couponCode, form]);
+
+  useEffect(() => {
+    onEmailChange?.(emailValue);
+  }, [emailValue, onEmailChange]);
 
   return (
     <form
@@ -76,7 +91,7 @@ export function CheckoutForm({
           if (result.success && result.orderNumber) {
             router.push(`/${locale}/checkout/success?order=${result.orderNumber}`);
             router.refresh();
-            toast.success(locale === "ar" ? "تم تأكيد استلام الطلب" : "Order received");
+            toast.success(locale === "ar" ? "تم استلام الطلب" : "Order received");
             return;
           }
 
@@ -100,12 +115,18 @@ export function CheckoutForm({
           : "Please enter your delivery details accurately. Payment will be collected in cash upon delivery."}
       </p>
 
+      <input type="hidden" {...form.register("couponCode")} />
+
       <Input
         type="email"
         autoComplete="email"
         placeholder={locale === "ar" ? "البريد الإلكتروني" : "Email address"}
         {...form.register("email")}
       />
+      {form.formState.errors.email ? (
+        <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
+      ) : null}
+
       <Input
         autoComplete="name"
         placeholder={locale === "ar" ? "الاسم الكامل" : "Full name"}
@@ -216,8 +237,8 @@ export function CheckoutForm({
               form.setValue("detailedAddress", data.address);
             }
 
-            if (data.city && onCityChange) {
-              onCityChange(data.city.toLowerCase() as ShippingCityCode);
+            if (data.city) {
+              onCityChange?.(data.city.toLowerCase() as ShippingCityCode);
             }
           }}
         />
