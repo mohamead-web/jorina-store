@@ -13,6 +13,29 @@ const adminEmails = (process.env.ADMIN_EMAILS ?? "")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
+type AuthRole = "CUSTOMER" | "ADMIN";
+
+async function promoteAdminUser(user: {
+  id: string;
+  email?: string | null;
+  role?: AuthRole | null;
+}) {
+  const normalizedEmail = user.email?.toLowerCase();
+
+  if (!normalizedEmail || !adminEmails.includes(normalizedEmail)) {
+    return user.role === "ADMIN" ? "ADMIN" : "CUSTOMER";
+  }
+
+  if (user.role !== "ADMIN") {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { role: "ADMIN" }
+    });
+  }
+
+  return "ADMIN";
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
@@ -31,9 +54,18 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async session({ session, user }) {
       if (session.user) {
-        const dbUser = user as typeof user & { role?: "CUSTOMER" | "ADMIN" };
+        const dbUser = user as typeof user & {
+          email?: string | null;
+          role?: AuthRole | null;
+        };
+        const resolvedRole = await promoteAdminUser({
+          id: user.id,
+          email: dbUser.email,
+          role: dbUser.role
+        });
+
         session.user.id = user.id;
-        session.user.role = dbUser.role === "ADMIN" ? "ADMIN" : "CUSTOMER";
+        session.user.role = resolvedRole;
       }
 
       return session;
@@ -41,12 +73,7 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     async createUser({ user }) {
-      if (user.email && adminEmails.includes(user.email.toLowerCase())) {
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { role: "ADMIN" }
-        });
-      }
+      await promoteAdminUser(user);
     }
   }
 };
