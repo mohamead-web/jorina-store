@@ -44,13 +44,17 @@ function MobileHeaderAction({
   label,
   icon: Icon,
   badge,
-  onClick
+  onClick,
+  ariaExpanded,
+  ariaControls
 }: {
   href?: string;
   label: string;
   icon: LucideIcon;
   badge?: number;
   onClick?: () => void;
+  ariaExpanded?: boolean;
+  ariaControls?: string;
 }) {
   const content = (
     <>
@@ -75,7 +79,15 @@ function MobileHeaderAction({
   }
 
   return (
-    <button type="button" aria-label={label} onClick={onClick} className={className}>
+    <button
+      type="button"
+      aria-label={label}
+      aria-expanded={ariaExpanded}
+      aria-controls={ariaControls}
+      aria-haspopup={ariaControls ? "dialog" : undefined}
+      onClick={onClick}
+      className={className}
+    >
       {content}
     </button>
   );
@@ -115,6 +127,36 @@ function MobileDrawerPrimaryLink({
           <ChevronRight className="h-[0.82rem] w-[0.82rem] shrink-0 text-[#8c8076]" strokeWidth={1.45} />
         </>
       )}
+    </Link>
+  );
+}
+
+function MobileDrawerUtilityLink({
+  href,
+  label,
+  icon: Icon,
+  badge,
+  onClick
+}: {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  badge?: number;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="relative flex flex-col items-center gap-2 px-2 py-1.5 text-center text-[0.8rem] leading-[1.35] text-[#4c433b] transition hover:text-[#1f1712]"
+    >
+      <Icon className="h-[1.05rem] w-[1.05rem] text-[#231a14]" strokeWidth={1.6} />
+      <span>{label}</span>
+      {badge ? (
+        <span className="absolute left-1/2 top-0 inline-flex h-4 min-w-4 translate-x-2 items-center justify-center rounded-full bg-black px-1 text-[8px] font-medium leading-none text-white">
+          {badge}
+        </span>
+      ) : null}
     </Link>
   );
 }
@@ -194,17 +236,14 @@ export function Header({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mobileOpen]);
 
-  const drawerDirectionOffset = locale === "ar" ? 28 : -28;
+  const drawerHiddenX = locale === "ar" ? "100%" : "-100%";
   const premiumEase = [0.22, 1, 0.36, 1] as const;
   const overlayTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.26, ease: premiumEase };
+    : { duration: 0.3, ease: premiumEase };
   const drawerTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.38, ease: premiumEase };
-  const itemTransition: Transition = prefersReducedMotion
-    ? { duration: 0.01 }
-    : { duration: 0.3, ease: premiumEase };
+    : { duration: 0.32, ease: premiumEase };
 
   const accountHref = isAuthenticated ? "/account" : "/auth/sign-in";
   const accountLabel = isAuthenticated
@@ -213,27 +252,56 @@ export function Header({
       ? "\u0627\u0644\u062d\u0633\u0627\u0628"
       : "Account";
 
+  const utilityLinks =
+    locale === "ar"
+      ? [
+          {
+            href: "/cart",
+            label: "\u0627\u0644\u0633\u0644\u0629",
+            icon: ShoppingBag,
+            badge: cartCount
+          },
+          {
+            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
+            label: "\u0627\u0644\u0645\u0641\u0636\u0644\u0629",
+            icon: Heart,
+            badge: wishlistCount
+          },
+          {
+            href: "/search",
+            label: "\u0627\u0628\u062d\u062b \u0639\u0646 \u0645\u0646\u062a\u062c \u0623\u0648 \u0641\u0626\u0629",
+            icon: Search
+          }
+        ]
+      : [
+          {
+            href: "/search",
+            label: "Search products",
+            icon: Search
+          },
+          {
+            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
+            label: "Favorites",
+            icon: Heart,
+            badge: wishlistCount
+          },
+          {
+            href: "/cart",
+            label: "Cart",
+            icon: ShoppingBag,
+            badge: cartCount
+          }
+        ];
+
   const secondaryLinks =
     locale === "ar"
       ? [
           { href: accountHref, label: accountLabel },
-          {
-            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
-            label: "\u0627\u0644\u0645\u0641\u0636\u0644\u0629"
-          },
-          { href: "/cart", label: "\u0627\u0644\u0633\u0644\u0629" },
-          { href: "/search", label: "\u0627\u0628\u062d\u062b \u0639\u0646 \u0645\u0646\u062a\u062c" },
           { href: "/contact", label: "\u0627\u062a\u0635\u0644 \u0628\u0646\u0627" },
           { href: "/about", label: "\u0627\u0643\u062a\u0634\u0641 \u0627\u0644\u0639\u0644\u0627\u0645\u0629" }
         ]
       : [
           { href: accountHref, label: accountLabel },
-          {
-            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
-            label: "Favorites"
-          },
-          { href: "/cart", label: "Cart" },
-          { href: "/search", label: "Search" },
           { href: "/contact", label: "Contact us" },
           { href: "/about", label: "Discover the brand" }
         ];
@@ -277,6 +345,8 @@ export function Header({
                   label={locale === "ar" ? "\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629" : "Open menu"}
                   icon={Menu}
                   onClick={openMobileMenu}
+                  aria-expanded={mobileOpen}
+                  aria-controls="mobile-drawer"
                 />
               </div>
             </div>
@@ -363,13 +433,13 @@ export function Header({
         </div>
       </header>
 
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {mobileOpen ? (
           <div className="lg:hidden">
             <motion.button
               type="button"
               aria-label={locale === "ar" ? "\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0642\u0627\u0626\u0645\u0629" : "Close menu"}
-              className="fixed inset-0 z-50 bg-[rgba(20,16,12,0.12)] backdrop-blur-[10px]"
+              className="fixed inset-0 z-50 bg-[rgba(20,16,12,0.14)] backdrop-blur-[8px] will-change-[opacity]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -378,156 +448,138 @@ export function Header({
             />
 
             <motion.aside
+              id="mobile-drawer"
               role="dialog"
               aria-modal="true"
               className={cn(
-                "fixed z-[60] flex w-[calc(100vw-0.7rem)] max-w-[22.85rem] flex-col overflow-hidden border border-[#e8e1d9] bg-white shadow-[0_26px_70px_-40px_rgba(16,12,8,0.34)]",
-                locale === "ar" ? "right-2" : "left-2"
+                "fixed inset-y-0 z-[60] flex w-[86vw] max-w-[22.5rem] flex-col overflow-hidden border-[rgba(26,20,15,0.06)] bg-white shadow-[0_18px_44px_-34px_rgba(16,12,8,0.18)] transform-gpu will-change-transform",
+                locale === "ar" ? "right-0 border-s" : "left-0 border-e"
               )}
-              style={{
-                top: "calc(env(safe-area-inset-top, 0px) + 0.45rem)",
-                bottom: "calc(env(safe-area-inset-bottom, 0px) + 0.55rem)",
-                borderRadius: "0.4rem"
-              }}
-              initial={{
-                x: drawerDirectionOffset,
-                opacity: prefersReducedMotion ? 1 : 0.98
-              }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{
-                x: drawerDirectionOffset,
-                opacity: prefersReducedMotion ? 1 : 0.98
-              }}
+              initial={{ x: drawerHiddenX }}
+              animate={{ x: 0 }}
+              exit={{ x: drawerHiddenX }}
               transition={drawerTransition}
               onClick={(event) => event.stopPropagation()}
               data-lenis-prevent
             >
-              <motion.div
-                className="shrink-0 border-b border-[#ece5dc] px-5 pb-3.5 pt-[1.125rem]"
-                dir="ltr"
-                initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
-                transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.03 }}
-              >
-                <div className="flex items-center justify-between gap-4">
-                  <button
-                    type="button"
-                    className="inline-flex h-8 w-8 items-center justify-center text-[#241b14] transition hover:opacity-70"
-                    onClick={closeMobileMenu}
-                    aria-label={locale === "ar" ? "\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0642\u0627\u0626\u0645\u0629" : "Close menu"}
+              <div className="flex h-full flex-col bg-white">
+                <div
+                  className={cn(
+                    "shrink-0 px-6 pb-6 pt-[calc(env(safe-area-inset-top,0px)+1.1rem)]",
+                    locale === "ar" ? "text-right" : "text-left"
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "flex items-start justify-between gap-4",
+                      locale === "ar" ? "flex-row-reverse" : "flex-row"
+                    )}
                   >
-                    <X className="h-[1.05rem] w-[1.05rem]" strokeWidth={1.6} />
-                  </button>
-
-                  <Link
-                    href="/"
-                    onClick={closeMobileMenu}
-                    className="flex items-center gap-1.5 text-[#2c241e]"
-                    dir="ltr"
-                  >
-                    <span className="font-display text-[1.5rem] tracking-[0.14em]">
-                      JORINA
-                    </span>
-                    <Image
-                      src="/brand/logo.png"
-                      alt="JORINA"
-                      width={20}
-                      height={20}
-                      className="h-5 w-5 object-contain"
-                    />
-                  </Link>
-                </div>
-              </motion.div>
-
-              <div
-                className="flex-1 overflow-y-auto px-5 pb-3 pt-[1.125rem]"
-                dir={locale === "ar" ? "rtl" : "ltr"}
-              >
-                <nav>
-                  {mainNavigation.map((item, index) => (
-                    <motion.div
-                      key={item.href}
-                      initial={{
-                        opacity: 0,
-                        x: prefersReducedMotion ? 0 : locale === "ar" ? 10 : -10
-                      }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{
-                        opacity: 0,
-                        x: prefersReducedMotion ? 0 : locale === "ar" ? 10 : -10
-                      }}
-                      transition={{
-                        ...itemTransition,
-                        delay: prefersReducedMotion ? 0 : 0.06 + index * 0.022
-                      }}
+                    <Link
+                      href="/"
+                      onClick={closeMobileMenu}
+                      className="inline-flex items-center gap-1.5 text-[#2c241e] opacity-90"
+                      dir="ltr"
                     >
+                      <span className="font-display text-[1.32rem] tracking-[0.12em]">
+                        JORINA
+                      </span>
+                      <Image
+                        src="/brand/logo.png"
+                        alt="JORINA"
+                        width={18}
+                        height={18}
+                        className="h-[1.05rem] w-[1.05rem] object-contain"
+                      />
+                    </Link>
+
+                    <button
+                      type="button"
+                      className="inline-flex h-8 w-8 items-center justify-center text-[#241b14] transition hover:opacity-70"
+                      onClick={closeMobileMenu}
+                      aria-label={locale === "ar" ? "\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0642\u0627\u0626\u0645\u0629" : "Close menu"}
+                    >
+                      <X className="h-[1rem] w-[1rem]" strokeWidth={1.55} />
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  className="flex-1 overflow-y-auto px-6 pb-4"
+                  dir={locale === "ar" ? "rtl" : "ltr"}
+                >
+                  <div className="border-b border-[#ece5dc] pb-4">
+                    <div className="grid grid-cols-3 gap-2">
+                      {utilityLinks.map((item) => (
+                        <MobileDrawerUtilityLink
+                          key={item.href}
+                          href={item.href}
+                          label={item.label}
+                          icon={item.icon}
+                          badge={item.badge}
+                          onClick={closeMobileMenu}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <nav>
+                    {mainNavigation.map((item) => (
                       <MobileDrawerPrimaryLink
+                        key={item.href}
                         href={item.href}
                         label={t(item.labelKey)}
                         locale={locale}
                         onClick={closeMobileMenu}
                       />
-                    </motion.div>
-                  ))}
-                </nav>
+                    ))}
+                  </nav>
 
-                <motion.div
-                  className="mt-3"
-                  initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
-                  transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.16 }}
-                >
-                  {secondaryLinks.map((item) => (
-                    <MobileDrawerSecondaryLink
-                      key={item.href}
-                      href={item.href}
-                      label={item.label}
-                      locale={locale}
-                      onClick={closeMobileMenu}
-                    />
-                  ))}
-                  {isAuthenticated ? (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        closeMobileMenu();
-                        signOut();
-                      }}
-                      className={cn(
-                        "block w-full border-b border-[#ece5dc] py-[0.92rem] text-[#64584d] transition hover:text-[#241b14]",
-                        locale === "ar"
-                          ? "text-right text-[0.96rem] leading-[1.55] font-ui"
-                          : "text-start text-[0.95rem] leading-[1.45]"
-                      )}
-                    >
-                      {t("account.logout")}
-                    </button>
-                  ) : null}
-                </motion.div>
-              </div>
-
-              <motion.div
-                className="shrink-0 border-t border-[#ece5dc] px-5 pb-4 pt-3.5"
-                initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
-                transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.2 }}
-              >
-                <div className="grid grid-cols-2 gap-1.5 rounded-[0.35rem] bg-[#777777] p-1.5">
-                  <CountrySwitcher
-                    locale={locale}
-                    countryCode={countryCode}
-                    variant="mobileDrawer"
-                  />
-                  <LanguageSwitcher
-                    locale={locale}
-                    countryCode={countryCode}
-                    variant="mobileDrawer"
-                  />
+                  <div className="mt-5 border-t border-[#ece5dc] pt-3">
+                    {secondaryLinks.map((item) => (
+                      <MobileDrawerSecondaryLink
+                        key={item.href}
+                        href={item.href}
+                        label={item.label}
+                        locale={locale}
+                        onClick={closeMobileMenu}
+                      />
+                    ))}
+                    {isAuthenticated ? (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          closeMobileMenu();
+                          signOut();
+                        }}
+                        className={cn(
+                          "block w-full border-b border-[#ece5dc] py-[0.92rem] text-[#64584d] transition hover:text-[#241b14]",
+                          locale === "ar"
+                            ? "text-right text-[0.96rem] leading-[1.55] font-ui"
+                            : "text-start text-[0.95rem] leading-[1.45]"
+                        )}
+                      >
+                        {t("account.logout")}
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
-              </motion.div>
+
+                <div className="shrink-0 border-t border-[#ece5dc] px-5 pb-[calc(env(safe-area-inset-bottom,0px)+0.55rem)] pt-3">
+                  <div className="grid grid-cols-2 gap-1.5 rounded-[0.35rem] bg-[#777777] p-1.5">
+                    <CountrySwitcher
+                      locale={locale}
+                      countryCode={countryCode}
+                      variant="mobileDrawer"
+                    />
+                    <LanguageSwitcher
+                      locale={locale}
+                      countryCode={countryCode}
+                      variant="mobileDrawer"
+                    />
+                  </div>
+                </div>
+              </div>
             </motion.aside>
           </div>
         ) : null}
