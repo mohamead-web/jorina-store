@@ -442,7 +442,7 @@ export function Header({
               <Link
                 href="/"
                 aria-label={locale === "ar" ? "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629" : "Back to home"}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-display text-[2rem] tracking-[0.045em] text-[#2c241e]"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-display text-[2rem] tracking-[0.045em] text-[#8a6631]"
                 dir="ltr"
               >
                 JORINA
@@ -591,7 +591,7 @@ export function Header({
                     <Link
                       href="/"
                       onClick={closeMobileMenu}
-                      className="inline-flex items-center gap-2 text-[#8a6631]"
+                      className="inline-flex items-center gap-2.5 text-[#8a6631]"
                       dir="ltr"
                     >
                       <span className="font-display text-[1.46rem] tracking-[0.12em]">
@@ -600,9 +600,9 @@ export function Header({
                       <Image
                         src="/brand/logo.png"
                         alt="JORINA"
-                        width={28}
-                        height={28}
-                        className="h-[1.55rem] w-[1.55rem] object-contain"
+                        width={58}
+                        height={58}
+                        className="h-[3.35rem] w-[3.35rem] object-contain"
                       />
                     </Link>
 
