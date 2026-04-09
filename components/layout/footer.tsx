@@ -29,7 +29,10 @@ export function Footer() {
               }}
             >
               <Input type="email" placeholder="name@email.com" className="sm:max-w-sm" />
-              <Button type="submit" variant="blush">
+              <Button
+                type="submit"
+                className="border-transparent bg-[#8a6631] text-white hover:bg-[#755526]"
+              >
                 {t("common.save")}
               </Button>
             </form>

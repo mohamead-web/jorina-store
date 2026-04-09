@@ -19,17 +19,19 @@ import {
   X
 } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Logo } from "@/components/layout/logo";
 import { CountrySwitcher } from "@/components/navigation/country-switcher";
 import { LanguageSwitcher } from "@/components/navigation/language-switcher";
+import { HeaderSearchSurface } from "@/components/search/header-search-surface";
 import { Button } from "@/components/ui/button";
 import { mainNavigation } from "@/lib/constants/site";
-import { Link, usePathname } from "@/lib/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { type AppCountry } from "@/types/domain";
+import type { SmartSearchResultSet } from "@/types/search";
 
 type HeaderProps = {
   locale: "ar" | "en";
@@ -38,6 +40,16 @@ type HeaderProps = {
   countryCode: AppCountry;
   isAuthenticated: boolean;
 };
+
+function createEmptySearchResults(): SmartSearchResultSet {
+  return {
+    query: "",
+    normalizedQuery: "",
+    products: [],
+    categories: [],
+    isFallback: false
+  };
+}
 
 function MobileHeaderAction({
   href,
@@ -68,7 +80,7 @@ function MobileHeaderAction({
   );
 
   const className =
-    "relative inline-flex h-10 w-10 items-center justify-center text-[#141414] transition hover:opacity-70";
+    "relative inline-flex h-10 w-10 items-center justify-center text-[#8a6631] transition hover:opacity-70";
 
   if (href) {
     return (
@@ -197,21 +209,44 @@ export function Header({
   isAuthenticated
 }: HeaderProps) {
   const t = useTranslations();
+  const router = useRouter();
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
   const [mobileOpenPath, setMobileOpenPath] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SmartSearchResultSet>(
+    createEmptySearchResults()
+  );
+  const [searchLoading, setSearchLoading] = useState(false);
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [mobileHeaderVisible, setMobileHeaderVisible] = useState(true);
   const mobileOpen = mobileOpenPath === pathname;
-  const effectiveMobileHeaderVisible = !isMobileViewport || mobileOpen || mobileHeaderVisible;
+  const deferredSearchQuery = useDeferredValue(searchQuery);
+  const effectiveMobileHeaderVisible =
+    !isMobileViewport || mobileOpen || searchOpen || mobileHeaderVisible;
 
   const openMobileMenu = () => {
+    setSearchOpen(false);
     setMobileHeaderVisible(true);
     setMobileOpenPath(pathname);
   };
   const closeMobileMenu = () => {
     setMobileHeaderVisible(true);
     setMobileOpenPath(null);
+  };
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery("");
+    setSearchResults(createEmptySearchResults());
+    setSearchLoading(false);
+  };
+  const openSearch = () => {
+    setMobileHeaderVisible(true);
+    setMobileOpenPath(null);
+    setSearchResults(createEmptySearchResults());
+    setSearchQuery("");
+    setSearchOpen(true);
   };
 
   useEffect(() => {
@@ -236,7 +271,7 @@ export function Header({
   }, []);
 
   useEffect(() => {
-    if (!mobileOpen) {
+    if (!mobileOpen && !searchOpen) {
       document.body.style.removeProperty("overflow");
       document.documentElement.style.removeProperty("overflow");
       return;
@@ -249,22 +284,76 @@ export function Header({
       document.body.style.removeProperty("overflow");
       document.documentElement.style.removeProperty("overflow");
     };
-  }, [mobileOpen]);
+  }, [mobileOpen, searchOpen]);
 
   useEffect(() => {
-    if (!mobileOpen) {
+    if (!mobileOpen && !searchOpen) {
       return;
     }
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         closeMobileMenu();
+        closeSearch();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [mobileOpen]);
+  }, [mobileOpen, searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) {
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(async () => {
+      setSearchLoading(true);
+
+      try {
+        const params = new URLSearchParams({
+          locale,
+          q: deferredSearchQuery
+        });
+        const response = await fetch(`/api/search/suggest?${params.toString()}`, {
+          signal: controller.signal
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to load search suggestions");
+        }
+
+        const data = (await response.json()) as SmartSearchResultSet;
+
+        if (!controller.signal.aborted) {
+          setSearchResults(data);
+        }
+      } catch {
+        if (!controller.signal.aborted) {
+          setSearchResults(createEmptySearchResults());
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setSearchLoading(false);
+        }
+      }
+    }, deferredSearchQuery.trim() ? 170 : 0);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timeoutId);
+    };
+  }, [deferredSearchQuery, locale, searchOpen]);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setSearchOpen(false);
+      setSearchLoading(false);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [pathname]);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -450,9 +539,11 @@ export function Header({
 
               <div className="flex shrink-0 items-center">
                 <MobileHeaderAction
-                  href="/search"
                   label={t("common.search")}
                   icon={Search}
+                  onClick={openSearch}
+                  ariaExpanded={searchOpen}
+                  ariaControls="header-search-surface"
                 />
                 <MobileHeaderAction
                   label={locale === "ar" ? "\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629" : "Open menu"}
@@ -495,10 +586,17 @@ export function Header({
               </div>
 
               <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-                <Button asChild variant="ghost" size="sm" className="h-11 w-11 rounded-full p-0">
-                  <Link href="/search" aria-label={t("common.search")}>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-11 w-11 rounded-full p-0"
+                  aria-label={t("common.search")}
+                  aria-expanded={searchOpen}
+                  aria-controls="header-search-surface"
+                  onClick={openSearch}
+                >
                     <Search className="h-5 w-5" />
-                  </Link>
                 </Button>
                 <Button
                   asChild
@@ -545,6 +643,22 @@ export function Header({
           </div>
         </div>
       </motion.header>
+
+      <HeaderSearchSurface
+        open={searchOpen}
+        locale={locale}
+        isMobileViewport={isMobileViewport}
+        query={searchQuery}
+        results={searchResults}
+        isLoading={searchLoading}
+        onClose={closeSearch}
+        onQueryChange={setSearchQuery}
+        onSubmit={() => {
+          const nextQuery = searchQuery.trim();
+          closeSearch();
+          router.push(nextQuery ? `/search?q=${encodeURIComponent(nextQuery)}` : "/search");
+        }}
+      />
 
       <AnimatePresence initial={false}>
         {mobileOpen ? (
