@@ -200,10 +200,40 @@ export function Header({
   const pathname = usePathname();
   const prefersReducedMotion = useReducedMotion();
   const [mobileOpenPath, setMobileOpenPath] = useState<string | null>(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [mobileHeaderVisible, setMobileHeaderVisible] = useState(true);
   const mobileOpen = mobileOpenPath === pathname;
+  const effectiveMobileHeaderVisible = !isMobileViewport || mobileOpen || mobileHeaderVisible;
 
-  const openMobileMenu = () => setMobileOpenPath(pathname);
-  const closeMobileMenu = () => setMobileOpenPath(null);
+  const openMobileMenu = () => {
+    setMobileHeaderVisible(true);
+    setMobileOpenPath(pathname);
+  };
+  const closeMobileMenu = () => {
+    setMobileHeaderVisible(true);
+    setMobileOpenPath(null);
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const mediaQuery = window.matchMedia("(max-width: 1023px)");
+    const syncViewport = () => {
+      setIsMobileViewport(mediaQuery.matches);
+    };
+
+    syncViewport();
+
+    if (typeof mediaQuery.addEventListener === "function") {
+      mediaQuery.addEventListener("change", syncViewport);
+      return () => mediaQuery.removeEventListener("change", syncViewport);
+    }
+
+    mediaQuery.addListener(syncViewport);
+    return () => mediaQuery.removeListener(syncViewport);
+  }, []);
 
   useEffect(() => {
     if (!mobileOpen) {
@@ -236,14 +266,79 @@ export function Header({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mobileOpen]);
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (!isMobileViewport || mobileOpen) {
+      return;
+    }
+
+    let frameId = 0;
+    let lastScrollY = window.scrollY;
+    const topThreshold = 12;
+    const directionThreshold = 10;
+    const hideAfter = 72;
+
+    const updateVisibility = () => {
+      const currentScrollY = window.scrollY;
+      const delta = currentScrollY - lastScrollY;
+
+      if (currentScrollY <= topThreshold) {
+        setMobileHeaderVisible(true);
+        lastScrollY = currentScrollY;
+        return;
+      }
+
+      if (Math.abs(delta) < directionThreshold) {
+        return;
+      }
+
+      if (delta > 0 && currentScrollY > hideAfter) {
+        setMobileHeaderVisible(false);
+      } else if (delta < 0) {
+        setMobileHeaderVisible(true);
+      }
+
+      lastScrollY = currentScrollY;
+    };
+
+    const handleScroll = () => {
+      if (frameId) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(() => {
+        frameId = 0;
+        updateVisibility();
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      if (frameId) {
+        window.cancelAnimationFrame(frameId);
+      }
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMobileViewport, mobileOpen]);
+
   const drawerHiddenX = locale === "ar" ? "100%" : "-100%";
   const premiumEase = [0.22, 1, 0.36, 1] as const;
+  const responsiveHeaderEase = [0.18, 1, 0.32, 1] as const;
   const overlayTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.3, ease: premiumEase };
+    : { duration: 0.56, ease: premiumEase };
   const drawerTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.32, ease: premiumEase };
+    : { duration: 0.62, ease: premiumEase };
+  const mobileHeaderTransition: Transition = prefersReducedMotion
+    ? { duration: 0.01 }
+    : effectiveMobileHeaderVisible
+      ? { duration: 0.24, ease: responsiveHeaderEase }
+      : { duration: 0.46, ease: responsiveHeaderEase };
 
   const accountHref = isAuthenticated ? "/account" : "/auth/sign-in";
   const accountLabel = isAuthenticated
@@ -306,9 +401,27 @@ export function Header({
           { href: "/about", label: "Discover the brand" }
         ];
 
+  const mobileHeaderMotion = isMobileViewport
+    ? {
+        y: effectiveMobileHeaderVisible ? 0 : "-104%",
+        opacity: effectiveMobileHeaderVisible ? 1 : 0
+      }
+    : {
+        y: 0,
+        opacity: 1
+      };
+
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-[#e9e3db] bg-white lg:border-white/60 lg:bg-white/80 lg:backdrop-blur-xl">
+      <motion.header
+        initial={false}
+        animate={mobileHeaderMotion}
+        transition={mobileHeaderTransition}
+        className={cn(
+          "fixed inset-x-0 top-0 z-40 w-full border-b border-[#e9e3db] bg-white will-change-[transform,opacity] lg:sticky lg:border-white/60 lg:bg-white/80 lg:backdrop-blur-xl",
+          effectiveMobileHeaderVisible ? "pointer-events-auto" : "pointer-events-none lg:pointer-events-auto"
+        )}
+      >
         <div className="page-section">
           <div className="section-container">
             <div className="relative flex h-[4.9rem] items-center justify-between lg:hidden" dir="ltr">
@@ -431,7 +544,7 @@ export function Header({
             </div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       <AnimatePresence initial={false}>
         {mobileOpen ? (
@@ -478,18 +591,18 @@ export function Header({
                     <Link
                       href="/"
                       onClick={closeMobileMenu}
-                      className="inline-flex items-center gap-1.5 text-[#2c241e] opacity-90"
+                      className="inline-flex items-center gap-2 text-[#8a6631]"
                       dir="ltr"
                     >
-                      <span className="font-display text-[1.32rem] tracking-[0.12em]">
+                      <span className="font-display text-[1.46rem] tracking-[0.12em]">
                         JORINA
                       </span>
                       <Image
                         src="/brand/logo.png"
                         alt="JORINA"
-                        width={18}
-                        height={18}
-                        className="h-[1.05rem] w-[1.05rem] object-contain"
+                        width={28}
+                        height={28}
+                        className="h-[1.55rem] w-[1.55rem] object-contain"
                       />
                     </Link>
 

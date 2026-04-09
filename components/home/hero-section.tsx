@@ -49,7 +49,6 @@ function MobileHeroIntro({ locale }: { locale: "ar" | "en" }) {
             mode="panel"
             imageClassName="object-cover object-[center_32%]"
             overlayClassName="bg-gradient-to-b from-[#3e2b22]/18 via-transparent to-[#fafaf8]/85"
-            wordmarkClassName="top-6 text-white/85"
           />
         </div>
         <div className="flex flex-1 items-center">

@@ -104,7 +104,7 @@ export default async function LocaleLayout({
           countryCode={preferences.countryCode}
           isAuthenticated={Boolean(session?.user)}
         />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pt-[4.9rem] lg:pt-0">{children}</main>
         <Footer />
         <MobileBottomNav
           locale={typedLocale}

@@ -10,15 +10,13 @@ export function OpeningSequence({
   mode = "overlay",
   className,
   imageClassName,
-  overlayClassName,
-  wordmarkClassName
+  overlayClassName
 }: {
   style?: MotionStyle;
   mode?: "overlay" | "panel";
   className?: string;
   imageClassName?: string;
   overlayClassName?: string;
-  wordmarkClassName?: string;
 }) {
   return (
     <motion.div
@@ -46,16 +44,6 @@ export function OpeningSequence({
           overlayClassName
         )}
       />
-      
-      {/* Top logo mark */}
-      <div
-        className={cn(
-          "absolute left-1/2 top-8 z-10 -translate-x-1/2 text-[10px] font-medium uppercase tracking-[0.4em] text-white/90",
-          wordmarkClassName
-        )}
-      >
-        Jorina
-      </div>
     </motion.div>
   );
 }
