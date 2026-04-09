@@ -15,29 +15,37 @@ export function CountrySwitcher({
 }: {
   locale: "ar" | "en";
   countryCode: AppCountry;
-  variant?: "default" | "drawer";
+  variant?: "default" | "mobileDrawer";
 }) {
   const router = useRouter();
-  const isDrawer = variant === "drawer";
+  const isMobileDrawer = variant === "mobileDrawer";
 
   return (
     <label
       className={cn(
         "flex items-center gap-2",
-        isDrawer
-          ? "w-full justify-between rounded-[1.1rem] border border-black/10 bg-[#f8f7f4] px-4 py-3.5 text-sm text-text"
+        isMobileDrawer
+          ? "min-w-0 flex-col items-start gap-1 rounded-[0.45rem] bg-white px-3 py-2.5 text-[#201914] shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
           : "rounded-full border border-border bg-white/70 px-3 py-2 text-sm text-text-soft sm:text-xs"
       )}
     >
-      <span className="flex items-center gap-2">
-        <MapPin className="h-4 w-4" />
-        {isDrawer ? (locale === "ar" ? "الدولة" : "Country") : null}
-      </span>
+      {isMobileDrawer ? (
+        <span className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-[#8b7f74]">
+          {locale === "ar" ? "الدولة" : "Country"}
+        </span>
+      ) : (
+        <span className="flex items-center gap-2">
+          <MapPin className="h-4 w-4" />
+        </span>
+      )}
+
       <select
         value={countryCode}
         className={cn(
-          "bg-transparent text-text",
-          isDrawer ? "text-sm" : "text-[16px] sm:text-sm"
+          "bg-transparent text-text outline-none",
+          isMobileDrawer
+            ? "w-full text-[0.95rem] font-medium text-[#201914]"
+            : "text-[16px] sm:text-sm"
         )}
         onChange={(event) => {
           const newCountry = event.target.value as AppCountry;

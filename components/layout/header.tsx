@@ -1,14 +1,25 @@
 "use client";
 
+import Image from "next/image";
 import {
   AnimatePresence,
   motion,
   type Transition,
   useReducedMotion
 } from "framer-motion";
-import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Heart,
+  Menu,
+  Search,
+  ShoppingBag,
+  type LucideIcon,
+  User,
+  X
+} from "lucide-react";
 import { signOut } from "next-auth/react";
-import { type ComponentType, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 
 import { Logo } from "@/components/layout/logo";
@@ -28,7 +39,49 @@ type HeaderProps = {
   isAuthenticated: boolean;
 };
 
-function MobileActionLink({
+function MobileHeaderAction({
+  href,
+  label,
+  icon: Icon,
+  badge,
+  onClick
+}: {
+  href?: string;
+  label: string;
+  icon: LucideIcon;
+  badge?: number;
+  onClick?: () => void;
+}) {
+  const content = (
+    <>
+      <Icon className="h-[1.55rem] w-[1.55rem]" strokeWidth={1.8} />
+      {badge ? (
+        <span className="absolute left-6 top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] font-medium text-white">
+          {badge}
+        </span>
+      ) : null}
+    </>
+  );
+
+  const className =
+    "relative inline-flex h-11 w-11 items-center justify-center text-[#141414] transition hover:opacity-70";
+
+  if (href) {
+    return (
+      <Link href={href} aria-label={label} onClick={onClick} className={className}>
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <button type="button" aria-label={label} onClick={onClick} className={className}>
+      {content}
+    </button>
+  );
+}
+
+function MobileDrawerShortcut({
   href,
   label,
   icon: Icon,
@@ -37,20 +90,20 @@ function MobileActionLink({
 }: {
   href: string;
   label: string;
-  icon: ComponentType<{ className?: string }>;
+  icon: LucideIcon;
   badge?: number;
-  onClick?: () => void;
+  onClick: () => void;
 }) {
   return (
     <Link
       href={href}
-      aria-label={label}
       onClick={onClick}
-      className="relative inline-flex h-10 w-10 items-center justify-center rounded-full text-text transition hover:bg-black/[0.04]"
+      className="relative flex flex-1 flex-col items-center justify-center rounded-[1.2rem] border border-[#e4ddd4] bg-[#fbfaf7] px-3 py-4 text-center text-[0.95rem] leading-tight text-[#211913] shadow-[0_14px_30px_-28px_rgba(17,12,8,0.25)] transition hover:bg-white"
     >
-      <Icon className="h-5 w-5" />
+      <Icon className="h-5 w-5" strokeWidth={1.8} />
+      <span className="mt-2">{label}</span>
       {badge ? (
-        <span className="absolute -end-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-text px-1 text-[10px] text-white">
+        <span className="absolute right-3 top-3 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] font-medium text-white">
           {badge}
         </span>
       ) : null}
@@ -58,32 +111,54 @@ function MobileActionLink({
   );
 }
 
-function MobileQuickLink({
+function MobileDrawerPrimaryLink({
   href,
-  icon: Icon,
   label,
-  badge,
+  locale,
   onClick
 }: {
   href: string;
-  icon: ComponentType<{ className?: string }>;
   label: string;
-  badge?: number;
-  onClick?: () => void;
+  locale: "ar" | "en";
+  onClick: () => void;
 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className="relative flex min-h-24 flex-col items-center justify-center rounded-[1.45rem] border border-black/10 bg-[#f8f7f4] px-3 py-4 text-center text-sm text-text shadow-[0_16px_34px_-28px_rgba(17,12,8,0.28)] transition hover:border-black/15 hover:bg-white"
+      className="flex items-center justify-between gap-4 border-b border-[#ece5dc] py-4 text-[1.2rem] leading-[1.35] text-[#241b14] transition hover:text-black"
     >
-      <Icon className="h-5 w-5" />
-      <span className="mt-2 text-sm">{label}</span>
-      {badge ? (
-        <span className="absolute left-3 top-3 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-text px-1 text-[10px] text-white">
-          {badge}
-        </span>
-      ) : null}
+      {locale === "ar" ? (
+        <>
+          <ChevronLeft className="h-4 w-4 shrink-0 text-[#86786c]" strokeWidth={1.5} />
+          <span className="font-display">{label}</span>
+        </>
+      ) : (
+        <>
+          <span className="font-display">{label}</span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-[#86786c]" strokeWidth={1.5} />
+        </>
+      )}
+    </Link>
+  );
+}
+
+function MobileDrawerSecondaryLink({
+  href,
+  label,
+  onClick
+}: {
+  href: string;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="block border-b border-[#ece5dc] py-4 text-[1rem] text-[#5d5248] transition hover:text-[#241b14]"
+    >
+      {label}
     </Link>
   );
 }
@@ -135,17 +210,17 @@ export function Header({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mobileOpen]);
 
-  const drawerDirectionOffset = locale === "ar" ? 72 : -72;
+  const drawerDirectionOffset = locale === "ar" ? 36 : -36;
   const premiumEase = [0.22, 1, 0.36, 1] as const;
   const overlayTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.32, ease: premiumEase };
+    : { duration: 0.24, ease: premiumEase };
   const drawerTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.36, ease: premiumEase };
+    : { duration: 0.34, ease: premiumEase };
   const itemTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.3, ease: premiumEase };
+    : { duration: 0.26, ease: premiumEase };
 
   const accountHref = isAuthenticated ? "/account" : "/auth/sign-in";
   const accountLabel = isAuthenticated
@@ -154,41 +229,99 @@ export function Header({
       ? "الحساب"
       : "Account";
 
+  const quickLinks =
+    locale === "ar"
+      ? [
+          {
+            href: "/cart",
+            icon: ShoppingBag,
+            label: "السلة",
+            badge: cartCount
+          },
+          {
+            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
+            icon: Heart,
+            label: "المفضلة",
+            badge: wishlistCount
+          },
+          {
+            href: "/search",
+            icon: Search,
+            label: "ابحث عن منتج أو فئة"
+          }
+        ]
+      : [
+          {
+            href: "/search",
+            icon: Search,
+            label: "Search products"
+          },
+          {
+            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
+            icon: Heart,
+            label: "Favorites",
+            badge: wishlistCount
+          },
+          {
+            href: "/cart",
+            icon: ShoppingBag,
+            label: "Cart",
+            badge: cartCount
+          }
+        ];
+
+  const secondaryLinks =
+    locale === "ar"
+      ? [
+          { href: accountHref, label: accountLabel },
+          { href: "/contact", label: "اتصل بنا" },
+          { href: "/about", label: "اكتشف العلامة" }
+        ]
+      : [
+          { href: accountHref, label: accountLabel },
+          { href: "/contact", label: "Contact us" },
+          { href: "/about", label: "Discover the brand" }
+        ];
+
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-white/60 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-[#e9e3db] bg-white lg:border-white/60 lg:bg-white/80 lg:backdrop-blur-xl">
         <div className="page-section">
           <div className="section-container">
-            <div className="flex h-[var(--header-height)] items-center justify-between gap-3 lg:hidden">
-              <div className="flex shrink-0 items-center gap-2">
-                <Logo locale={locale} />
-                <button
-                  type="button"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white text-text shadow-[0_10px_24px_-18px_rgba(17,12,8,0.3)] transition hover:border-black/15 hover:bg-[#faf9f6]"
-                  onClick={openMobileMenu}
-                  aria-label={locale === "ar" ? "فتح القائمة" : "Open menu"}
-                >
-                  <Menu className="h-5 w-5" />
-                </button>
+            <div className="relative flex h-[5.35rem] items-center justify-between lg:hidden" dir="ltr">
+              <div className="flex shrink-0 items-center">
+                <MobileHeaderAction
+                  href="/cart"
+                  label={locale === "ar" ? "السلة" : "Cart"}
+                  icon={ShoppingBag}
+                  badge={cartCount}
+                />
+                <MobileHeaderAction
+                  href={accountHref}
+                  label={accountLabel}
+                  icon={User}
+                />
               </div>
 
-              <div className="flex shrink-0 items-center gap-0.5">
-                <MobileActionLink
+              <Link
+                href="/"
+                aria-label={locale === "ar" ? "العودة إلى الرئيسية" : "Back to home"}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-display text-[2.2rem] tracking-[0.03em] text-[#2c241e]"
+                dir="ltr"
+              >
+                JORINA
+              </Link>
+
+              <div className="flex shrink-0 items-center">
+                <MobileHeaderAction
                   href="/search"
                   label={t("common.search")}
                   icon={Search}
                 />
-                <MobileActionLink
-                  href={isAuthenticated ? "/account/favorites" : "/auth/sign-in"}
-                  label={t("account.favorites")}
-                  icon={Heart}
-                  badge={wishlistCount}
-                />
-                <MobileActionLink
-                  href="/cart"
-                  label={t("cart.title")}
-                  icon={ShoppingBag}
-                  badge={cartCount}
+                <MobileHeaderAction
+                  label={locale === "ar" ? "فتح القائمة" : "Open menu"}
+                  icon={Menu}
+                  onClick={openMobileMenu}
                 />
               </div>
             </div>
@@ -262,11 +395,7 @@ export function Header({
                 <Button asChild variant="secondary" size="sm" className="hidden sm:inline-flex">
                   <Link href={accountHref}>
                     <User className="h-4 w-4" />
-                    {isAuthenticated
-                      ? t("account.overview")
-                      : locale === "ar"
-                        ? "دخول"
-                        : "Sign in"}
+                    {isAuthenticated ? t("account.overview") : locale === "ar" ? "دخول" : "Sign in"}
                   </Link>
                 </Button>
               </div>
@@ -281,7 +410,7 @@ export function Header({
             <motion.button
               type="button"
               aria-label={locale === "ar" ? "إغلاق القائمة" : "Close menu"}
-              className="fixed inset-0 z-50 bg-[rgba(16,12,9,0.46)] backdrop-blur-[4px]"
+              className="fixed inset-0 z-50 bg-[rgba(24,18,13,0.28)] backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -293,157 +422,163 @@ export function Header({
               role="dialog"
               aria-modal="true"
               className={cn(
-                "fixed z-[60] flex w-[min(92vw,25rem)] flex-col overflow-hidden bg-white shadow-[0_34px_80px_-30px_rgba(17,12,8,0.42)]",
+                "fixed z-[60] flex w-[calc(100vw-1rem)] max-w-[23rem] flex-col overflow-hidden border border-[#e8e1d9] bg-white shadow-[0_28px_70px_-38px_rgba(16,12,8,0.42)]",
                 locale === "ar" ? "right-2" : "left-2"
               )}
               style={{
                 top: "calc(env(safe-area-inset-top, 0px) + 0.55rem)",
-                bottom: "calc(env(safe-area-inset-bottom, 0px) + 0.65rem)",
-                borderRadius: "1.75rem"
+                bottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)",
+                borderRadius: "1rem"
               }}
               initial={{
                 x: drawerDirectionOffset,
-                opacity: prefersReducedMotion ? 1 : 0.92,
-                scale: prefersReducedMotion ? 1 : 0.985
+                opacity: prefersReducedMotion ? 1 : 0.98
               }}
-              animate={{ x: 0, opacity: 1, scale: 1 }}
+              animate={{ x: 0, opacity: 1 }}
               exit={{
                 x: drawerDirectionOffset,
-                opacity: prefersReducedMotion ? 1 : 0.92,
-                scale: prefersReducedMotion ? 1 : 0.99
+                opacity: prefersReducedMotion ? 1 : 0.98
               }}
               transition={drawerTransition}
               onClick={(event) => event.stopPropagation()}
               data-lenis-prevent
             >
               <motion.div
-                className="flex items-center justify-between border-b border-black/8 px-5 pb-5 pt-6"
-                initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 8 }}
+                className="shrink-0 border-b border-[#ece5dc] px-5 pb-4 pt-5"
+                dir="ltr"
+                initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 8 }}
-                transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.04 }}
+                exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
+                transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.03 }}
               >
-                <Logo locale={locale} />
-                <button
-                  type="button"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-text transition hover:border-black/15 hover:bg-[#faf9f6]"
-                  onClick={closeMobileMenu}
-                  aria-label={locale === "ar" ? "إغلاق القائمة" : "Close menu"}
-                >
-                  <X className="h-5 w-5" />
-                </button>
+                <div className="flex items-center justify-between gap-4">
+                  <button
+                    type="button"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#e2dbd3] text-[#241b14] transition hover:bg-[#faf8f4]"
+                    onClick={closeMobileMenu}
+                    aria-label={locale === "ar" ? "إغلاق القائمة" : "Close menu"}
+                  >
+                    <X className="h-5 w-5" strokeWidth={1.7} />
+                  </button>
+
+                  <Link
+                    href="/"
+                    onClick={closeMobileMenu}
+                    className="flex items-center gap-2 text-[#2c241e]"
+                    dir="ltr"
+                  >
+                    <span className="font-display text-[1.65rem] tracking-[0.18em]">
+                      JORINA
+                    </span>
+                    <Image
+                      src="/brand/logo.png"
+                      alt="JORINA"
+                      width={26}
+                      height={26}
+                      className="h-6 w-6 object-contain"
+                    />
+                  </Link>
+                </div>
               </motion.div>
 
-              <div className="flex-1 overflow-y-auto px-5 pb-5 pt-5">
+              <div className="flex-1 overflow-y-auto px-5 pb-3 pt-5" dir={locale === "ar" ? "rtl" : "ltr"}>
                 <motion.div
-                  className="grid grid-cols-3 gap-2.5"
-                  initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 10 }}
-                  transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.08 }}
-                >
-                  <MobileQuickLink
-                    href="/cart"
-                    label={t("cart.title")}
-                    icon={ShoppingBag}
-                    badge={cartCount}
-                    onClick={closeMobileMenu}
-                  />
-                  <MobileQuickLink
-                    href={isAuthenticated ? "/account/favorites" : "/auth/sign-in"}
-                    label={t("account.favorites")}
-                    icon={Heart}
-                    badge={wishlistCount}
-                    onClick={closeMobileMenu}
-                  />
-                  <MobileQuickLink
-                    href="/search"
-                    label={t("common.search")}
-                    icon={Search}
-                    onClick={closeMobileMenu}
-                  />
-                </motion.div>
-
-                <nav className="mt-8">
-                  {mainNavigation.map((item, index) => {
-                    const active =
-                      pathname === item.href || pathname.startsWith(`${item.href}/`);
-
-                    return (
-                      <motion.div
-                        key={item.href}
-                        initial={{
-                          opacity: 0,
-                          x: prefersReducedMotion ? 0 : locale === "ar" ? 12 : -12
-                        }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{
-                          opacity: 0,
-                          x: prefersReducedMotion ? 0 : locale === "ar" ? 12 : -12
-                        }}
-                        transition={{
-                          ...itemTransition,
-                          delay: prefersReducedMotion ? 0 : 0.1 + index * 0.03
-                        }}
-                      >
-                        <Link
-                          href={item.href}
-                          onClick={closeMobileMenu}
-                          className={cn(
-                            "flex items-center justify-between border-b border-black/8 py-4 text-[1.22rem] leading-[1.25] text-[#1d140d]",
-                            active ? "font-semibold" : "font-normal"
-                          )}
-                        >
-                          <span className="font-display">{t(item.labelKey)}</span>
-                        </Link>
-                      </motion.div>
-                    );
-                  })}
-                </nav>
-
-                <motion.div
-                  className="mt-8 border-t border-black/8 pt-5"
+                  className="flex gap-3"
                   initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 8 }}
-                  transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.24 }}
+                  transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.06 }}
                 >
-                  <Link
-                    href={accountHref}
-                    onClick={closeMobileMenu}
-                    className="flex items-center gap-3 rounded-[1.1rem] border border-black/10 bg-[#f8f7f4] px-4 py-3.5 text-sm text-text transition hover:border-black/15 hover:bg-white"
-                  >
-                    <User className="h-4 w-4" />
-                    <span>{accountLabel}</span>
-                  </Link>
-
-                  <div className="mt-3 space-y-2">
-                    <CountrySwitcher
-                      locale={locale}
-                      countryCode={countryCode}
-                      variant="drawer"
+                  {quickLinks.map((item) => (
+                    <MobileDrawerShortcut
+                      key={item.href}
+                      href={item.href}
+                      label={item.label}
+                      icon={item.icon}
+                      badge={item.badge}
+                      onClick={closeMobileMenu}
                     />
-                    <LanguageSwitcher
-                      locale={locale}
-                      countryCode={countryCode}
-                      variant="drawer"
-                    />
-                  </div>
+                  ))}
+                </motion.div>
 
+                <nav className="mt-7">
+                  {mainNavigation.map((item, index) => (
+                    <motion.div
+                      key={item.href}
+                      initial={{
+                        opacity: 0,
+                        x: prefersReducedMotion ? 0 : locale === "ar" ? 10 : -10
+                      }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{
+                        opacity: 0,
+                        x: prefersReducedMotion ? 0 : locale === "ar" ? 10 : -10
+                      }}
+                      transition={{
+                        ...itemTransition,
+                        delay: prefersReducedMotion ? 0 : 0.08 + index * 0.025
+                      }}
+                    >
+                      <MobileDrawerPrimaryLink
+                        href={item.href}
+                        label={t(item.labelKey)}
+                        locale={locale}
+                        onClick={closeMobileMenu}
+                      />
+                    </motion.div>
+                  ))}
+                </nav>
+
+                <motion.div
+                  className="mt-6"
+                  initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
+                  transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.18 }}
+                >
+                  {secondaryLinks.map((item) => (
+                    <MobileDrawerSecondaryLink
+                      key={item.href}
+                      href={item.href}
+                      label={item.label}
+                      onClick={closeMobileMenu}
+                    />
+                  ))}
                   {isAuthenticated ? (
                     <button
                       type="button"
-                      className="mt-4 text-sm text-text-soft transition hover:text-text"
                       onClick={() => {
                         closeMobileMenu();
                         signOut();
                       }}
+                      className="block w-full border-b border-[#ece5dc] py-4 text-start text-[1rem] text-[#5d5248] transition hover:text-[#241b14]"
                     >
                       {t("account.logout")}
                     </button>
                   ) : null}
                 </motion.div>
               </div>
+
+              <motion.div
+                className="shrink-0 border-t border-[#ece5dc] px-5 pb-5 pt-4"
+                initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
+                transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.22 }}
+              >
+                <div className="grid grid-cols-2 gap-2 rounded-[0.75rem] bg-[#767676] p-1.5">
+                  <CountrySwitcher
+                    locale={locale}
+                    countryCode={countryCode}
+                    variant="mobileDrawer"
+                  />
+                  <LanguageSwitcher
+                    locale={locale}
+                    countryCode={countryCode}
+                    variant="mobileDrawer"
+                  />
+                </div>
+              </motion.div>
             </motion.aside>
           </div>
         ) : null}
