@@ -1,6 +1,11 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  type Transition,
+  useReducedMotion
+} from "framer-motion";
 import { Heart, Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { type ComponentType, useEffect, useState } from "react";
@@ -131,15 +136,16 @@ export function Header({
   }, [mobileOpen]);
 
   const drawerDirectionOffset = locale === "ar" ? 72 : -72;
-  const overlayTransition = prefersReducedMotion
+  const premiumEase = [0.22, 1, 0.36, 1] as const;
+  const overlayTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.32, ease: [0.22, 1, 0.36, 1] };
-  const drawerTransition = prefersReducedMotion
+    : { duration: 0.32, ease: premiumEase };
+  const drawerTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.36, ease: [0.22, 1, 0.36, 1] };
-  const itemTransition = prefersReducedMotion
+    : { duration: 0.36, ease: premiumEase };
+  const itemTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.3, ease: [0.22, 1, 0.36, 1] };
+    : { duration: 0.3, ease: premiumEase };
 
   const accountHref = isAuthenticated ? "/account" : "/auth/sign-in";
   const accountLabel = isAuthenticated
