@@ -54,9 +54,9 @@ function MobileHeaderAction({
 }) {
   const content = (
     <>
-      <Icon className="h-[1.55rem] w-[1.55rem]" strokeWidth={1.8} />
+      <Icon className="h-[1.3rem] w-[1.3rem]" strokeWidth={1.65} />
       {badge ? (
-        <span className="absolute left-6 top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] font-medium text-white">
+        <span className="absolute left-[1.45rem] top-1 inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-black px-1 text-[9px] font-medium leading-none text-white">
           {badge}
         </span>
       ) : null}
@@ -64,7 +64,7 @@ function MobileHeaderAction({
   );
 
   const className =
-    "relative inline-flex h-11 w-11 items-center justify-center text-[#141414] transition hover:opacity-70";
+    "relative inline-flex h-10 w-10 items-center justify-center text-[#141414] transition hover:opacity-70";
 
   if (href) {
     return (
@@ -78,36 +78,6 @@ function MobileHeaderAction({
     <button type="button" aria-label={label} onClick={onClick} className={className}>
       {content}
     </button>
-  );
-}
-
-function MobileDrawerShortcut({
-  href,
-  label,
-  icon: Icon,
-  badge,
-  onClick
-}: {
-  href: string;
-  label: string;
-  icon: LucideIcon;
-  badge?: number;
-  onClick: () => void;
-}) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className="relative flex flex-1 flex-col items-center justify-center rounded-[1.2rem] border border-[#e4ddd4] bg-[#fbfaf7] px-3 py-4 text-center text-[0.95rem] leading-tight text-[#211913] shadow-[0_14px_30px_-28px_rgba(17,12,8,0.25)] transition hover:bg-white"
-    >
-      <Icon className="h-5 w-5" strokeWidth={1.8} />
-      <span className="mt-2">{label}</span>
-      {badge ? (
-        <span className="absolute right-3 top-3 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-black px-1 text-[10px] font-medium text-white">
-          {badge}
-        </span>
-      ) : null}
-    </Link>
   );
 }
 
@@ -126,17 +96,23 @@ function MobileDrawerPrimaryLink({
     <Link
       href={href}
       onClick={onClick}
-      className="flex items-center justify-between gap-4 border-b border-[#ece5dc] py-4 text-[1.2rem] leading-[1.35] text-[#241b14] transition hover:text-black"
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      className={cn(
+        "flex items-center justify-between gap-4 border-b border-[#ece5dc] py-[0.92rem] text-[#241b14] transition hover:text-black",
+        locale === "ar"
+          ? "text-right text-[1.02rem] font-normal leading-[1.55] font-ui"
+          : "text-[1.08rem] leading-[1.4] font-display"
+      )}
     >
       {locale === "ar" ? (
         <>
-          <ChevronLeft className="h-4 w-4 shrink-0 text-[#86786c]" strokeWidth={1.5} />
-          <span className="font-display">{label}</span>
+          <span className="block flex-1">{label}</span>
+          <ChevronLeft className="h-[0.82rem] w-[0.82rem] shrink-0 text-[#8c8076]" strokeWidth={1.45} />
         </>
       ) : (
         <>
-          <span className="font-display">{label}</span>
-          <ChevronRight className="h-4 w-4 shrink-0 text-[#86786c]" strokeWidth={1.5} />
+          <span className="block flex-1">{label}</span>
+          <ChevronRight className="h-[0.82rem] w-[0.82rem] shrink-0 text-[#8c8076]" strokeWidth={1.45} />
         </>
       )}
     </Link>
@@ -146,17 +122,25 @@ function MobileDrawerPrimaryLink({
 function MobileDrawerSecondaryLink({
   href,
   label,
+  locale,
   onClick
 }: {
   href: string;
   label: string;
+  locale: "ar" | "en";
   onClick: () => void;
 }) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className="block border-b border-[#ece5dc] py-4 text-[1rem] text-[#5d5248] transition hover:text-[#241b14]"
+      dir={locale === "ar" ? "rtl" : "ltr"}
+      className={cn(
+        "block border-b border-[#ece5dc] py-[0.92rem] text-[#64584d] transition hover:text-[#241b14]",
+        locale === "ar"
+          ? "text-right text-[0.96rem] leading-[1.55] font-ui"
+          : "text-[0.95rem] leading-[1.45]"
+      )}
     >
       {label}
     </Link>
@@ -210,75 +194,46 @@ export function Header({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [mobileOpen]);
 
-  const drawerDirectionOffset = locale === "ar" ? 36 : -36;
+  const drawerDirectionOffset = locale === "ar" ? 28 : -28;
   const premiumEase = [0.22, 1, 0.36, 1] as const;
   const overlayTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.24, ease: premiumEase };
+    : { duration: 0.26, ease: premiumEase };
   const drawerTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.34, ease: premiumEase };
+    : { duration: 0.38, ease: premiumEase };
   const itemTransition: Transition = prefersReducedMotion
     ? { duration: 0.01 }
-    : { duration: 0.26, ease: premiumEase };
+    : { duration: 0.3, ease: premiumEase };
 
   const accountHref = isAuthenticated ? "/account" : "/auth/sign-in";
   const accountLabel = isAuthenticated
     ? t("account.overview")
     : locale === "ar"
-      ? "الحساب"
+      ? "\u0627\u0644\u062d\u0633\u0627\u0628"
       : "Account";
-
-  const quickLinks =
-    locale === "ar"
-      ? [
-          {
-            href: "/cart",
-            icon: ShoppingBag,
-            label: "السلة",
-            badge: cartCount
-          },
-          {
-            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
-            icon: Heart,
-            label: "المفضلة",
-            badge: wishlistCount
-          },
-          {
-            href: "/search",
-            icon: Search,
-            label: "ابحث عن منتج أو فئة"
-          }
-        ]
-      : [
-          {
-            href: "/search",
-            icon: Search,
-            label: "Search products"
-          },
-          {
-            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
-            icon: Heart,
-            label: "Favorites",
-            badge: wishlistCount
-          },
-          {
-            href: "/cart",
-            icon: ShoppingBag,
-            label: "Cart",
-            badge: cartCount
-          }
-        ];
 
   const secondaryLinks =
     locale === "ar"
       ? [
           { href: accountHref, label: accountLabel },
-          { href: "/contact", label: "اتصل بنا" },
-          { href: "/about", label: "اكتشف العلامة" }
+          {
+            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
+            label: "\u0627\u0644\u0645\u0641\u0636\u0644\u0629"
+          },
+          { href: "/cart", label: "\u0627\u0644\u0633\u0644\u0629" },
+          { href: "/search", label: "\u0627\u0628\u062d\u062b \u0639\u0646 \u0645\u0646\u062a\u062c" },
+          { href: "/contact", label: "\u0627\u062a\u0635\u0644 \u0628\u0646\u0627" },
+          { href: "/about", label: "\u0627\u0643\u062a\u0634\u0641 \u0627\u0644\u0639\u0644\u0627\u0645\u0629" }
         ]
       : [
           { href: accountHref, label: accountLabel },
+          {
+            href: isAuthenticated ? "/account/favorites" : "/auth/sign-in",
+            label: "Favorites"
+          },
+          { href: "/cart", label: "Cart" },
+          { href: "/search", label: "Search" },
           { href: "/contact", label: "Contact us" },
           { href: "/about", label: "Discover the brand" }
         ];
@@ -288,11 +243,11 @@ export function Header({
       <header className="sticky top-0 z-40 border-b border-[#e9e3db] bg-white lg:border-white/60 lg:bg-white/80 lg:backdrop-blur-xl">
         <div className="page-section">
           <div className="section-container">
-            <div className="relative flex h-[5.35rem] items-center justify-between lg:hidden" dir="ltr">
+            <div className="relative flex h-[4.9rem] items-center justify-between lg:hidden" dir="ltr">
               <div className="flex shrink-0 items-center">
                 <MobileHeaderAction
                   href="/cart"
-                  label={locale === "ar" ? "السلة" : "Cart"}
+                  label={locale === "ar" ? "\u0627\u0644\u0633\u0644\u0629" : "Cart"}
                   icon={ShoppingBag}
                   badge={cartCount}
                 />
@@ -305,8 +260,8 @@ export function Header({
 
               <Link
                 href="/"
-                aria-label={locale === "ar" ? "العودة إلى الرئيسية" : "Back to home"}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-display text-[2.2rem] tracking-[0.03em] text-[#2c241e]"
+                aria-label={locale === "ar" ? "\u0627\u0644\u0639\u0648\u062f\u0629 \u0625\u0644\u0649 \u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629" : "Back to home"}
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap font-display text-[2rem] tracking-[0.045em] text-[#2c241e]"
                 dir="ltr"
               >
                 JORINA
@@ -319,7 +274,7 @@ export function Header({
                   icon={Search}
                 />
                 <MobileHeaderAction
-                  label={locale === "ar" ? "فتح القائمة" : "Open menu"}
+                  label={locale === "ar" ? "\u0641\u062a\u062d \u0627\u0644\u0642\u0627\u0626\u0645\u0629" : "Open menu"}
                   icon={Menu}
                   onClick={openMobileMenu}
                 />
@@ -395,7 +350,11 @@ export function Header({
                 <Button asChild variant="secondary" size="sm" className="hidden sm:inline-flex">
                   <Link href={accountHref}>
                     <User className="h-4 w-4" />
-                    {isAuthenticated ? t("account.overview") : locale === "ar" ? "دخول" : "Sign in"}
+                    {isAuthenticated
+                      ? t("account.overview")
+                      : locale === "ar"
+                        ? "\u062f\u062e\u0648\u0644"
+                        : "Sign in"}
                   </Link>
                 </Button>
               </div>
@@ -409,8 +368,8 @@ export function Header({
           <div className="lg:hidden">
             <motion.button
               type="button"
-              aria-label={locale === "ar" ? "إغلاق القائمة" : "Close menu"}
-              className="fixed inset-0 z-50 bg-[rgba(24,18,13,0.28)] backdrop-blur-[2px]"
+              aria-label={locale === "ar" ? "\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0642\u0627\u0626\u0645\u0629" : "Close menu"}
+              className="fixed inset-0 z-50 bg-[rgba(20,16,12,0.12)] backdrop-blur-[10px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -422,13 +381,13 @@ export function Header({
               role="dialog"
               aria-modal="true"
               className={cn(
-                "fixed z-[60] flex w-[calc(100vw-1rem)] max-w-[23rem] flex-col overflow-hidden border border-[#e8e1d9] bg-white shadow-[0_28px_70px_-38px_rgba(16,12,8,0.42)]",
+                "fixed z-[60] flex w-[calc(100vw-0.7rem)] max-w-[22.85rem] flex-col overflow-hidden border border-[#e8e1d9] bg-white shadow-[0_26px_70px_-40px_rgba(16,12,8,0.34)]",
                 locale === "ar" ? "right-2" : "left-2"
               )}
               style={{
-                top: "calc(env(safe-area-inset-top, 0px) + 0.55rem)",
-                bottom: "calc(env(safe-area-inset-bottom, 0px) + 0.75rem)",
-                borderRadius: "1rem"
+                top: "calc(env(safe-area-inset-top, 0px) + 0.45rem)",
+                bottom: "calc(env(safe-area-inset-bottom, 0px) + 0.55rem)",
+                borderRadius: "0.4rem"
               }}
               initial={{
                 x: drawerDirectionOffset,
@@ -444,7 +403,7 @@ export function Header({
               data-lenis-prevent
             >
               <motion.div
-                className="shrink-0 border-b border-[#ece5dc] px-5 pb-4 pt-5"
+                className="shrink-0 border-b border-[#ece5dc] px-5 pb-3.5 pt-[1.125rem]"
                 dir="ltr"
                 initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -454,54 +413,38 @@ export function Header({
                 <div className="flex items-center justify-between gap-4">
                   <button
                     type="button"
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#e2dbd3] text-[#241b14] transition hover:bg-[#faf8f4]"
+                    className="inline-flex h-8 w-8 items-center justify-center text-[#241b14] transition hover:opacity-70"
                     onClick={closeMobileMenu}
-                    aria-label={locale === "ar" ? "إغلاق القائمة" : "Close menu"}
+                    aria-label={locale === "ar" ? "\u0625\u063a\u0644\u0627\u0642 \u0627\u0644\u0642\u0627\u0626\u0645\u0629" : "Close menu"}
                   >
-                    <X className="h-5 w-5" strokeWidth={1.7} />
+                    <X className="h-[1.05rem] w-[1.05rem]" strokeWidth={1.6} />
                   </button>
 
                   <Link
                     href="/"
                     onClick={closeMobileMenu}
-                    className="flex items-center gap-2 text-[#2c241e]"
+                    className="flex items-center gap-1.5 text-[#2c241e]"
                     dir="ltr"
                   >
-                    <span className="font-display text-[1.65rem] tracking-[0.18em]">
+                    <span className="font-display text-[1.5rem] tracking-[0.14em]">
                       JORINA
                     </span>
                     <Image
                       src="/brand/logo.png"
                       alt="JORINA"
-                      width={26}
-                      height={26}
-                      className="h-6 w-6 object-contain"
+                      width={20}
+                      height={20}
+                      className="h-5 w-5 object-contain"
                     />
                   </Link>
                 </div>
               </motion.div>
 
-              <div className="flex-1 overflow-y-auto px-5 pb-3 pt-5" dir={locale === "ar" ? "rtl" : "ltr"}>
-                <motion.div
-                  className="flex gap-3"
-                  initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 8 }}
-                  transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.06 }}
-                >
-                  {quickLinks.map((item) => (
-                    <MobileDrawerShortcut
-                      key={item.href}
-                      href={item.href}
-                      label={item.label}
-                      icon={item.icon}
-                      badge={item.badge}
-                      onClick={closeMobileMenu}
-                    />
-                  ))}
-                </motion.div>
-
-                <nav className="mt-7">
+              <div
+                className="flex-1 overflow-y-auto px-5 pb-3 pt-[1.125rem]"
+                dir={locale === "ar" ? "rtl" : "ltr"}
+              >
+                <nav>
                   {mainNavigation.map((item, index) => (
                     <motion.div
                       key={item.href}
@@ -516,7 +459,7 @@ export function Header({
                       }}
                       transition={{
                         ...itemTransition,
-                        delay: prefersReducedMotion ? 0 : 0.08 + index * 0.025
+                        delay: prefersReducedMotion ? 0 : 0.06 + index * 0.022
                       }}
                     >
                       <MobileDrawerPrimaryLink
@@ -530,17 +473,18 @@ export function Header({
                 </nav>
 
                 <motion.div
-                  className="mt-6"
+                  className="mt-3"
                   initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
-                  transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.18 }}
+                  transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.16 }}
                 >
                   {secondaryLinks.map((item) => (
                     <MobileDrawerSecondaryLink
                       key={item.href}
                       href={item.href}
                       label={item.label}
+                      locale={locale}
                       onClick={closeMobileMenu}
                     />
                   ))}
@@ -551,7 +495,12 @@ export function Header({
                         closeMobileMenu();
                         signOut();
                       }}
-                      className="block w-full border-b border-[#ece5dc] py-4 text-start text-[1rem] text-[#5d5248] transition hover:text-[#241b14]"
+                      className={cn(
+                        "block w-full border-b border-[#ece5dc] py-[0.92rem] text-[#64584d] transition hover:text-[#241b14]",
+                        locale === "ar"
+                          ? "text-right text-[0.96rem] leading-[1.55] font-ui"
+                          : "text-start text-[0.95rem] leading-[1.45]"
+                      )}
                     >
                       {t("account.logout")}
                     </button>
@@ -560,13 +509,13 @@ export function Header({
               </div>
 
               <motion.div
-                className="shrink-0 border-t border-[#ece5dc] px-5 pb-5 pt-4"
+                className="shrink-0 border-t border-[#ece5dc] px-5 pb-4 pt-3.5"
                 initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 6 }}
-                transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.22 }}
+                transition={{ ...itemTransition, delay: prefersReducedMotion ? 0 : 0.2 }}
               >
-                <div className="grid grid-cols-2 gap-2 rounded-[0.75rem] bg-[#767676] p-1.5">
+                <div className="grid grid-cols-2 gap-1.5 rounded-[0.35rem] bg-[#777777] p-1.5">
                   <CountrySwitcher
                     locale={locale}
                     countryCode={countryCode}

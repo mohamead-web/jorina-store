@@ -26,13 +26,13 @@ export function LanguageSwitcher({
       className={cn(
         "flex items-center gap-2",
         isMobileDrawer
-          ? "min-w-0 flex-col items-start gap-1 rounded-[0.45rem] bg-white px-3 py-2.5 text-[#201914] shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
+          ? "min-w-0 flex-col items-start gap-0.5 rounded-[0.2rem] bg-white px-3 py-2 text-[#201914] shadow-[0_1px_3px_rgba(0,0,0,0.08)]"
           : "rounded-full border border-border bg-white/70 px-3 py-2 text-sm text-text-soft sm:text-xs"
       )}
     >
       {isMobileDrawer ? (
-        <span className="text-[0.62rem] font-medium uppercase tracking-[0.16em] text-[#8b7f74]">
-          {locale === "ar" ? "اللغة" : "Language"}
+        <span className="text-[0.58rem] font-medium uppercase tracking-[0.12em] text-[#8b7f74]">
+          {locale === "ar" ? "\u0627\u0644\u0644\u063a\u0629" : "Language"}
         </span>
       ) : (
         <span className="flex items-center gap-2">
@@ -45,7 +45,7 @@ export function LanguageSwitcher({
         className={cn(
           "bg-transparent text-text outline-none",
           isMobileDrawer
-            ? "w-full text-[0.95rem] font-medium text-[#201914]"
+            ? "w-full text-[0.88rem] font-medium text-[#201914]"
             : "text-[16px] sm:text-sm"
         )}
         onChange={(event) => {
@@ -59,7 +59,7 @@ export function LanguageSwitcher({
           });
         }}
       >
-        <option value="ar">العربية</option>
+        <option value="ar">{"\u0627\u0644\u0639\u0631\u0628\u064a\u0629"}</option>
         <option value="en">English</option>
       </select>
     </label>
